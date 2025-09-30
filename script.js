@@ -172,9 +172,9 @@ function initialize() {
     console.log("Inicializando Reloj Segmentado...");
 
     // --- DIBUJAR LOS ANILLOS SIMPLES ---
-    createRingSegments({ container: segmentContainers.year, segmentCount: 12, radius: 90, strokeWidth: 18, cssClass: 'year-segment', gapDegrees: 2 });
-    createRingSegments({ container: segmentContainers.month, segmentCount: 5, radius: 70, strokeWidth: 18, cssClass: 'month-segment', gapDegrees: 3 });
-    createRingSegments({ container: segmentContainers.week, segmentCount: 7, radius: 50, strokeWidth: 18, cssClass: 'week-segment', gapDegrees: 3 });
+    createRingSegments({ container: segmentContainers.year, segmentCount: 12, radius: 90, strokeWidth: 8, cssClass: 'year-segment', gapDegrees: 2 });
+    createRingSegments({ container: segmentContainers.month, segmentCount: 5, radius: 80, strokeWidth: 8, cssClass: 'month-segment', gapDegrees: 3 });
+    createRingSegments({ container: segmentContainers.week, segmentCount: 7, radius: 70, strokeWidth: 8, cssClass: 'week-segment', gapDegrees: 3 });
     
     // --- CORRECCIÓN CLAVE: DIBUJAR EL ANILLO DIARIO DE FORMA SEGURA ---
     // Limpiamos el contenedor principal del día.
@@ -197,8 +197,8 @@ function initialize() {
     createRingSegments({
         container: daySegmentsContainer, // Usamos el nuevo contenedor
         segmentCount: 96,
-        radius: 30,
-        strokeWidth: 23,
+        radius: 60,
+        strokeWidth: 30,
         cssClass: 'day-segment',
         totalAngle: 352,
         startAngle: 4,
