@@ -1,6 +1,4 @@
 // --- ELEMENTOS DEL DOM ---
-const rings = { /* ... sin cambios ... */ };
-// (El resto de las constantes del DOM son iguales a la versión anterior)
 const rings = {
     day: document.getElementById('day-ring'),
     week: document.getElementById('week-ring'),
@@ -17,7 +15,6 @@ const labels = {
 const dividersContainer = document.getElementById('dividers');
 
 // --- CÁLCULOS INICIALES ---
-const circumferences = { /* ... sin cambios ... */ };
 const circumferences = {
     day: 2 * Math.PI * rings.day.r.baseVal.value,
     week: 2 * Math.PI * rings.week.r.baseVal.value,
@@ -25,10 +22,7 @@ const circumferences = {
     year: 2 * Math.PI * rings.year.r.baseVal.value
 };
 
-
 // --- FUNCIONES DE DIBUJO ---
-function createDividers(segments, outerRadius, innerRadius) { /* ... sin cambios ... */ }
-function polarToCartesian(cx, cy, r, angle) { /* ... sin cambios ... */ }
 function createDividers(segments, outerRadius, innerRadius) {
     const angleStep = 360 / segments;
     for (let i = 0; i < segments; i++) {
@@ -49,22 +43,19 @@ function polarToCartesian(cx, cy, r, angle) {
     return { x: cx + (r * Math.cos(rad)), y: cy + (r * Math.sin(rad)) };
 }
 
-
-// Actualiza el vaciado de un anillo (LÓGICA CORREGIDA)
+// Actualiza el vaciado de un anillo
 function setProgress(ringKey, percentRemaining) {
     const circumference = circumferences[ringKey];
-    // La animación de vaciado usa el porcentaje restante
     const offset = circumference - (percentRemaining / 100 * circumference);
     rings[ringKey].style.strokeDasharray = `${circumference} ${circumference}`;
     rings[ringKey].style.strokeDashoffset = offset;
 }
 
-// --- LÓGICA PRINCIPAL (CORREGIDA) ---
+// --- LÓGICA PRINCIPAL ---
 function updateClocks() {
     const now = new Date();
 
     // 1. ANILLO DIARIO (07:00 a 23:00)
-    // ... Lógica para encontrar el bloque actual (sin cambios)
     const blocks = [{ name: 'ichi', start: 7 }, { name: 'ni', start: 11 }, { name: 'san', start: 15 }, { name: 'shi', start: 19 }, { name: 'go', start: 23 }];
     const currentHour = now.getHours();
     let currentBlock = blocks.find((b, i) => {
@@ -72,7 +63,7 @@ function updateClocks() {
         if (b.name === 'go') return currentHour >= b.start || currentHour < next.start;
         return currentHour >= b.start && currentHour < next.start;
     }) || { name: 'go' };
-
+    
     const dayStart = new Date(now).setHours(7, 0, 0, 0);
     const dayEnd = new Date(now).setHours(23, 0, 0, 0);
     let dayPercentPassed = 0;
@@ -112,8 +103,8 @@ function updateClocks() {
 }
 
 // --- INICIALIZACIÓN ---
-function initialize() { /* ... sin cambios ... */ }
 function initialize() {
+    // Dibujar las líneas divisorias
     createDividers(12, 100, 80); // Año
     createDividers(4, 85, 65);  // Mes
     createDividers(7, 70, 50);  // Semana
