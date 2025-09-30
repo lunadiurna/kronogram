@@ -1,5 +1,5 @@
 :root {
-    /* Paleta de colores principal */
+    /* Paleta de colores principal (sin cambios) */
     --bg-color: #1a1a1a;
     --text-color: #f0f0f0;
     --day-color: #ff8a80;
@@ -8,12 +8,12 @@
     --year-color: #40c4ff;
     --go-color: #9370db;
     
-    /* Colores para los estados de los segmentos */
-    --segment-future-color: #444; /* Color de los segmentos que aún no llegan */
-    --segment-passed-color: #333; /* Color de los segmentos que ya pasaron (más tenues) */
+    /* --- CAMBIO 1 --- */
+    /* Se redefine el color gris para que sea únicamente para los segmentos consumidos. */
+    --segment-consumed-color: #383838; /* Gris para segmentos ya consumidos */
 }
 
-/* --- ESTRUCTURA GENERAL --- */
+/* --- ESTRUCTURA GENERAL (sin cambios) --- */
 body {
     margin: 0;
     padding: 20px;
@@ -35,55 +35,50 @@ body {
 }
 
 #clocks-svg {
-    /* Giramos el SVG para que el ángulo 0 esté en la parte superior. */
     transform: rotate(-90deg);
 }
 
-/* --- ESTILOS DE LOS SEGMENTOS --- */
+/* --- ESTILOS DE LOS SEGMENTOS (Lógica modificada) --- */
 
 /* Estilo base para todos los segmentos */
 .segment {
-    fill: none; /* Los segmentos no tienen relleno */
-    stroke-linecap: butt;
-    transition: stroke 0.3s ease, opacity 0.3s ease; /* Transición suave de colores */
+    fill: none;
+    stroke-linecap: butt; /* Mantenemos los extremos rectos */
+    transition: stroke 0.3s ease, opacity 0.3s ease;
 }
 
-/* Estilo para los segmentos que aún no han sido alcanzados por el progreso */
-.segment-future {
-    stroke: var(--segment-future-color);
-    opacity: 0.8;
-}
+/* --- CAMBIO 2 --- */
+/* Ahora, por defecto, todos los segmentos de un anillo tienen su color principal. */
+/* Esto hace que los segmentos "futuros" ya tengan el color intenso que querías. */
+.day-segment   { stroke: var(--day-color); }
+.week-segment  { stroke: var(--week-color); }
+.month-segment { stroke: var(--month-color); }
+.year-segment  { stroke: var(--year-color); }
+#go-segment    { stroke: var(--go-color) !important; }
 
-/* Estilo para los segmentos que ya pasaron. Son más tenues. */
+/* --- CAMBIO 3 --- */
+/* La clase 'segment-passed' ahora ANULA el color base y aplica el gris de consumido. */
 .segment-passed {
-    stroke: var(--segment-passed-color);
-    opacity: 0.6;
+    stroke: var(--segment-consumed-color) !important; /* Usamos !important para asegurar la anulación */
+    opacity: 0.7;
 }
 
-/* Estilo para el segmento ACTIVO (el "cabezal de reproducción") */
+/* El segmento ACTIVO sigue igual: se asegura de tener opacidad completa y aplica la animación. */
 .segment-active {
     opacity: 1;
-    /* Aplica la animación de pulso */
     animation: pulse 1.5s infinite;
 }
 
-/* Asignación de colores por anillo */
-.day-segment.segment-active { stroke: var(--day-color); }
-.week-segment.segment-active { stroke: var(--week-color); }
-.month-segment.segment-active { stroke: var(--month-color); }
-.year-segment.segment-active { stroke: var(--year-color); }
-#go-segment { stroke: var(--go-color) !important; } /* El segmento 'Go' siempre es morado */
+/* (La clase .segment-future ya no es necesaria y ha sido eliminada) */
 
-/* --- ANIMACIÓN DE PULSO --- */
-/* Define la animación que hace que el segmento activo brille o titile */
+/* --- ANIMACIÓN DE PULSO (sin cambios) --- */
 @keyframes pulse {
     0% { opacity: 1; }
     50% { opacity: 0.5; }
     100% { opacity: 1; }
 }
 
-
-/* --- PANEL DE INFORMACIÓN (sin cambios significativos) --- */
+/* --- PANEL DE INFORMACIÓN (sin cambios) --- */
 #labels { display: grid; grid-template-columns: 1fr 1fr; gap: 20px 30px; width: 100%; max-width: 400px; }
 .label-group { display: flex; flex-direction: column; text-align: left; padding-left: 10px; border-left: 2px solid; }
 .label-title { font-size: 0.9em; opacity: 0.8; text-transform: capitalize; }
