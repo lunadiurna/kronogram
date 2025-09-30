@@ -28,11 +28,12 @@ body {
     max-width: 500px;
 }
 
+/* ELIMINAMOS scaleX(-1) */
 #clocks-svg {
-    transform: scaleX(-1) rotate(-90deg); /* Vaciado en sentido horario */
+    transform: rotate(-90deg); /* El inicio es arriba, la animación la controla JS */
 }
 
-/* Capa 1: Fondos */
+/* Capas y Anillos (sin cambios) */
 #background-rings circle {
     fill: none;
     stroke: var(--ring-bg-color);
@@ -43,10 +44,9 @@ body {
 #background-rings circle:nth-child(3) { stroke-width: 20; }
 #background-rings circle:nth-child(4) { stroke-width: 25; }
 
-/* Capa 2: Anillos de Progreso */
 .progress-ring {
     fill: none;
-    stroke-linecap: round; /* Extremos redondeados para vaciado suave */
+    stroke-linecap: round;
     transition: stroke-dashoffset 1s linear;
 }
 #year-ring  { stroke: var(--year-color);  stroke-width: 20; }
@@ -54,22 +54,20 @@ body {
 #week-ring  { stroke: var(--week-color);  stroke-width: 20; }
 #day-ring   { stroke: var(--day-color);   stroke-width: 25; }
 
-/* Capa 3: Divisores */
 #dividers line {
     stroke: var(--divider-color);
     stroke-width: 2;
     stroke-linecap: round;
 }
 
-/* Barra 'Go' */
+/* Barra 'Go' (sin transformaciones extra) */
 #go-bar {
     stroke: var(--go-color);
     stroke-width: 4;
     stroke-linecap: round;
-    transform: scaleX(-1); /* Compensar el giro del SVG */
 }
 
-/* Etiquetas con colores */
+/* Etiquetas (sin transformaciones extra) */
 #labels {
     position: absolute;
     top: 0; left: 0;
@@ -77,13 +75,13 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    transform: scaleX(-1); /* Compensar giro */
+    /* ELIMINAMOS scaleX(-1) */
 }
 .label-group { position: absolute; display: flex; flex-direction: column; }
 .label-title { font-size: 0.7em; opacity: 0.9; text-transform: capitalize; font-weight: bold; }
 .label-percentage { font-size: 0.8em; }
 
-/* Colores y Posiciones de Etiquetas */
+/* Colores y Posiciones de Etiquetas (sin cambios) */
 #day-label-group   { color: var(--day-color);   transform: translateY(-45px); font-size: 1.4em;}
 #week-label-group  { color: var(--week-color);  transform: translateY(-5px); }
 #month-label-group { color: var(--month-color); transform: translateY(35px); }
