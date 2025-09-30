@@ -1,15 +1,19 @@
 :root {
+    /* Paleta de colores principal */
     --bg-color: #1a1a1a;
     --text-color: #f0f0f0;
-    --ring-bg-color: #383838;
     --day-color: #ff8a80;
     --week-color: #69f0ae;
     --month-color: #ffd740;
     --year-color: #40c4ff;
     --go-color: #9370db;
-    --divider-color: #111;
+    
+    /* Colores para los estados de los segmentos */
+    --segment-future-color: #444; /* Color de los segmentos que aún no llegan */
+    --segment-passed-color: #333; /* Color de los segmentos que ya pasaron (más tenues) */
 }
 
+/* --- ESTRUCTURA GENERAL --- */
 body {
     margin: 0;
     padding: 20px;
@@ -31,32 +35,55 @@ body {
 }
 
 #clocks-svg {
+    /* Giramos el SVG para que el ángulo 0 esté en la parte superior. */
     transform: rotate(-90deg);
 }
 
-/* Anillos y Divisores (sin cambios) */
-#background-rings circle { fill: none; stroke: var(--ring-bg-color); stroke-width: 25; }
-#background-rings circle:nth-child(1) { stroke-width: 20; }
-#background-rings circle:nth-child(2) { stroke-width: 20; }
-#background-rings circle:nth-child(3) { stroke-width: 20; }
-#background-rings circle:nth-child(4) { stroke-width: 25; }
-.progress-ring { fill: none; stroke-linecap: round; transition: stroke-dashoffset 1s linear; }
-#year-ring  { stroke: var(--year-color);  stroke-width: 20; }
-#month-ring { stroke: var(--month-color); stroke-width: 20; }
-#week-ring  { stroke: var(--week-color);  stroke-width: 20; }
-#day-ring   { stroke: var(--day-color);   stroke-width: 25; }
-#dividers line { stroke: var(--divider-color); stroke-width: 2; stroke-linecap: round; }
+/* --- ESTILOS DE LOS SEGMENTOS --- */
 
-/* Barra 'Go' (CORREGIDA) */
-#go-bar {
-    stroke: var(--go-color);
-    stroke-width: 4;
-    stroke-linecap: round;
-    transform-origin: center; /* Asegura que la rotación sea desde el centro */
-    transform: rotate(90deg); /* Anula la rotación del SVG padre para quedar arriba */
+/* Estilo base para todos los segmentos */
+.segment {
+    fill: none; /* Los segmentos no tienen relleno */
+    stroke-linecap: round; /* Extremos redondeados */
+    transition: stroke 0.3s ease, opacity 0.3s ease; /* Transición suave de colores */
 }
 
-/* Panel de Información y Etiquetas (sin cambios) */
+/* Estilo para los segmentos que aún no han sido alcanzados por el progreso */
+.segment-future {
+    stroke: var(--segment-future-color);
+    opacity: 0.8;
+}
+
+/* Estilo para los segmentos que ya pasaron. Son más tenues. */
+.segment-passed {
+    stroke: var(--segment-passed-color);
+    opacity: 0.6;
+}
+
+/* Estilo para el segmento ACTIVO (el "cabezal de reproducción") */
+.segment-active {
+    opacity: 1;
+    /* Aplica la animación de pulso */
+    animation: pulse 1.5s infinite;
+}
+
+/* Asignación de colores por anillo */
+.day-segment.segment-active { stroke: var(--day-color); }
+.week-segment.segment-active { stroke: var(--week-color); }
+.month-segment.segment-active { stroke: var(--month-color); }
+.year-segment.segment-active { stroke: var(--year-color); }
+#go-segment { stroke: var(--go-color) !important; } /* El segmento 'Go' siempre es morado */
+
+/* --- ANIMACIÓN DE PULSO --- */
+/* Define la animación que hace que el segmento activo brille o titile */
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+
+/* --- PANEL DE INFORMACIÓN (sin cambios significativos) --- */
 #labels { display: grid; grid-template-columns: 1fr 1fr; gap: 20px 30px; width: 100%; max-width: 400px; }
 .label-group { display: flex; flex-direction: column; text-align: left; padding-left: 10px; border-left: 2px solid; }
 .label-title { font-size: 0.9em; opacity: 0.8; text-transform: capitalize; }
@@ -67,7 +94,6 @@ body {
 #week-label-group  { border-color: var(--week-color);  color: var(--week-color); }
 #month-label-group { border-color: var(--month-color); color: var(--month-color); }
 #year-label-group  { border-color: var(--year-color);  color: var(--year-color); }
-
 @media (min-width: 768px) {
     body { flex-direction: row; justify-content: center; align-items: center; }
     #labels { grid-template-columns: 1fr; max-width: 200px; }
