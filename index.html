@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reloj de Bloques 3.0</title>
+    <title>Reloj de Bloques Definitivo</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -27,9 +27,21 @@
         </svg>
 
         <div id="labels">
-            <div id="day-label" class="label">
-                <span id="day-block-name">--</span>
-                <span id="day-percentage">--%</span>
+            <div class="label-group" id="day-label-group">
+                <span class="label-title" id="day-block-name">--</span>
+                <span class="label-percentage" id="day-percentage">--%</span>
+            </div>
+            <div class="label-group" id="week-label-group">
+                <span class="label-title">Semana</span>
+                <span class="label-percentage" id="week-percentage">--%</span>
+            </div>
+            <div class="label-group" id="month-label-group">
+                <span class="label-title">Mes</span>
+                <span class="label-percentage" id="month-percentage">--%</span>
+            </div>
+            <div class="label-group" id="year-label-group">
+                <span class="label-title">Año</span>
+                <span class="label-percentage" id="year-percentage">--%</span>
             </div>
         </div>
     </div>
