@@ -2,87 +2,100 @@
     --bg-color: #1a1a1a;
     --text-color: #f0f0f0;
     --ring-bg-color: #383838;
-    --day-color: #ff8a80;   /* Rosa/Rojo claro */
-    --week-color: #69f0ae;  /* Verde menta */
-    --month-color: #ffd740; /* Amarillo */
-    --year-color: #40c4ff;  /* Azul cielo */
-    --go-color: #9370db;    /* Violeta */
+    --day-color: #ff8a80;
+    --week-color: #69f0ae;
+    --month-color: #ffd740;
+    --year-color: #40c4ff;
+    --go-color: #9370db;
     --divider-color: #111;
 }
 
 body {
     margin: 0;
+    padding: 20px;
+    box-sizing: border-box;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     background-color: var(--bg-color);
     color: var(--text-color);
     display: flex;
+    flex-direction: column; /* Diseño para móviles: reloj arriba, texto abajo */
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    text-align: center;
+    gap: 40px;
 }
 
 #clock-container {
-    position: relative;
     width: 90vw;
-    max-width: 500px;
+    max-width: 400px;
 }
 
-/* ELIMINAMOS scaleX(-1) */
 #clocks-svg {
-    transform: rotate(-90deg); /* El inicio es arriba, la animación la controla JS */
+    transform: rotate(-90deg);
 }
 
-/* Capas y Anillos (sin cambios) */
-#background-rings circle {
-    fill: none;
-    stroke: var(--ring-bg-color);
-    stroke-width: 25;
-}
+/* Anillos, Divisores, Barra 'Go' (sin cambios) */
+#background-rings circle { fill: none; stroke: var(--ring-bg-color); stroke-width: 25; }
 #background-rings circle:nth-child(1) { stroke-width: 20; }
 #background-rings circle:nth-child(2) { stroke-width: 20; }
 #background-rings circle:nth-child(3) { stroke-width: 20; }
 #background-rings circle:nth-child(4) { stroke-width: 25; }
-
-.progress-ring {
-    fill: none;
-    stroke-linecap: round;
-    transition: stroke-dashoffset 1s linear;
-}
+.progress-ring { fill: none; stroke-linecap: round; transition: stroke-dashoffset 1s linear; }
 #year-ring  { stroke: var(--year-color);  stroke-width: 20; }
 #month-ring { stroke: var(--month-color); stroke-width: 20; }
 #week-ring  { stroke: var(--week-color);  stroke-width: 20; }
 #day-ring   { stroke: var(--day-color);   stroke-width: 25; }
+#dividers line { stroke: var(--divider-color); stroke-width: 2; stroke-linecap: round; }
+#go-bar { stroke: var(--go-color); stroke-width: 4; stroke-linecap: round; }
 
-#dividers line {
-    stroke: var(--divider-color);
-    stroke-width: 2;
-    stroke-linecap: round;
-}
-
-/* Barra 'Go' (sin transformaciones extra) */
-#go-bar {
-    stroke: var(--go-color);
-    stroke-width: 4;
-    stroke-linecap: round;
-}
-
-/* Etiquetas (sin transformaciones extra) */
+/* Nuevo Panel de Información */
 #labels {
-    position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    /* ELIMINAMOS scaleX(-1) */
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px 30px;
+    width: 100%;
+    max-width: 400px;
 }
-.label-group { position: absolute; display: flex; flex-direction: column; }
-.label-title { font-size: 0.7em; opacity: 0.9; text-transform: capitalize; font-weight: bold; }
-.label-percentage { font-size: 0.8em; }
 
-/* Colores y Posiciones de Etiquetas (sin cambios) */
-#day-label-group   { color: var(--day-color);   transform: translateY(-45px); font-size: 1.4em;}
-#week-label-group  { color: var(--week-color);  transform: translateY(-5px); }
-#month-label-group { color: var(--month-color); transform: translateY(35px); }
-#year-label-group  { color: var(--year-color);  transform: translateY(65px); }
+.label-group {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    padding-left: 10px;
+    border-left: 2px solid;
+}
+
+.label-title {
+    font-size: 0.9em;
+    opacity: 0.8;
+    text-transform: capitalize;
+}
+
+.label-value {
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+.label-fraction {
+    font-size: 0.8em;
+    opacity: 0.7;
+}
+
+/* Colores de los bordes y texto */
+#day-label-group   { border-color: var(--day-color);   color: var(--day-color); }
+#week-label-group  { border-color: var(--week-color);  color: var(--week-color); }
+#month-label-group { border-color: var(--month-color); color: var(--month-color); }
+#year-label-group  { border-color: var(--year-color);  color: var(--year-color); }
+
+/* Diseño para pantallas más grandes (tablets, escritorio) */
+@media (min-width: 768px) {
+    body {
+        flex-direction: row; /* Reloj a la izquierda, texto a la derecha */
+        justify-content: center;
+        align-items: center;
+    }
+    #labels {
+        grid-template-columns: 1fr; /* Una sola columna */
+        max-width: 200px;
+    }
+}
