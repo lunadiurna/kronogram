@@ -1,11 +1,12 @@
 :root {
     --bg-color: #1a1a1a;
     --text-color: #f0f0f0;
-    --day-color: #ff6347;   /* Tomate */
-    --week-color: #ffd700;  /* Oro */
-    --month-color: #1e90ff; /* Azul Dodger */
-    --year-color: #32cd32;  /* Verde Lima */
-    --go-color: #9370db;    /* Violeta */
+    --ring-bg-color: #383838;
+    --day-color: #ff8a80;   /* Rosa/Rojo claro */
+    --week-color: #69f0ae;  /* Verde menta */
+    --month-color: #ffd740; /* Amarillo */
+    --year-color: #40c4ff;  /* Azul cielo */
+    --divider-color: #111;
 }
 
 body {
@@ -16,7 +17,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;
     text-align: center;
 }
 
@@ -27,37 +28,41 @@ body {
 }
 
 #clocks-svg {
-    transform: scaleX(-1) rotate(-90deg);
+    transform: rotate(-90deg); /* El punto de inicio es arriba (12 en punto) */
 }
 
-/* ---- CAPA 1: SEGMENTOS ESTÁTICOS (AHORA MÁS VISIBLES) ---- */
-#static-segments path {
+/* Capa 1: Fondos */
+#background-rings circle {
     fill: none;
-    stroke-width: 8;
-    stroke-linecap: butt;
-    opacity: 0.5; /* AUMENTAMOS LA OPACIDAD PARA QUE SE VEAN */
+    stroke: var(--ring-bg-color);
+    stroke-width: 25;
 }
+/* Hacemos cada anillo más delgado para que coincida con el dibujo */
+#background-rings circle:nth-child(1) { stroke-width: 20; }
+#background-rings circle:nth-child(2) { stroke-width: 20; }
+#background-rings circle:nth-child(3) { stroke-width: 20; }
+#background-rings circle:nth-child(4) { stroke-width: 25; }
 
-/* ---- CAPA 2: ANILLOS DE PROGRESO ---- */
+
+/* Capa 2: Anillos de Progreso */
 .progress-ring {
     fill: none;
-    stroke-width: 8.5;
-    stroke-linecap: round;
+    stroke-linecap: butt; /* Extremos rectos para que el llenado sea exacto */
     transition: stroke-dashoffset 1s linear;
 }
+#year-ring  { stroke: var(--year-color);  stroke-width: 20; }
+#month-ring { stroke: var(--month-color); stroke-width: 20; }
+#week-ring  { stroke: var(--week-color);  stroke-width: 20; }
+#day-ring   { stroke: var(--day-color);   stroke-width: 25; }
 
-#day-ring   { stroke: var(--day-color); }
-#week-ring  { stroke: var(--week-color); }
-#month-ring { stroke: var(--month-color); }
-#year-ring  { stroke: var(--year-color); }
-
-#go-bar {
-    fill: var(--go-color);
-    transform-origin: center;
-    transform: scaleX(-1) rotate(90deg); 
+/* Capa 3: Divisores */
+#dividers line {
+    stroke: var(--divider-color);
+    stroke-width: 2;
+    stroke-linecap: round;
 }
 
-/* ---- ETIQUETAS (NUEVOS ESTILOS) ---- */
+/* Etiquetas con colores */
 #labels {
     position: absolute;
     top: 0; left: 0;
@@ -65,26 +70,24 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    transform: scaleX(-1); /* Compensar rotación del SVG */
 }
-
 .label-group {
     position: absolute;
     display: flex;
     flex-direction: column;
 }
 .label-title {
-    font-size: 0.6em;
-    opacity: 0.7;
-    text-transform: capitalize;
-}
-.label-percentage {
     font-size: 0.7em;
+    opacity: 0.9;
+    text-transform: capitalize;
     font-weight: bold;
 }
+.label-percentage {
+    font-size: 0.8em;
+}
 
-/* Posicionamiento de cada etiqueta */
-#day-label-group { transform: translateY(-30px); font-size: 1.5em; }
-#week-label-group { transform: translateY(5px); }
-#month-label-group { transform: translateY(35px); }
-#year-label-group { transform: translateY(65px); }
+/* Colores y Posiciones de Etiquetas */
+#day-label-group   { color: var(--day-color);   transform: translateY(-45px); font-size: 1.4em;}
+#week-label-group  { color: var(--week-color);  transform: translateY(-5px); }
+#month-label-group { color: var(--month-color); transform: translateY(35px); }
+#year-label-group  { color: var(--year-color);  transform: translateY(65px); }
