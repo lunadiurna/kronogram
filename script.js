@@ -9,16 +9,19 @@ const weekRing = document.getElementById('week-ring');
 const monthRing = document.getElementById('month-ring');
 const yearRing = document.getElementById('year-ring');
 
+// Etiquetas
 const dayBlockName = document.getElementById('day-block-name');
 const dayPercentage = document.getElementById('day-percentage');
+const weekPercentage = document.getElementById('week-percentage');
+const monthPercentage = document.getElementById('month-percentage');
+const yearPercentage = document.getElementById('year-percentage');
+
 
 // --- FUNCIONES AUXILIARES ---
-
-// Genera el atributo 'd' para un arco SVG
 function describeArc(x, y, radius, startAngle, endAngle) {
     const polarToCartesian = (centerX, centerY, r, angleInDegrees) => {
-        const angleInRadians = (angleInDegrees) * Math.PI / 180.0;
-        return { x: centerX + (r * Math.cos(angleInRadians)), y: centerY + (r * Math.sin(angleInRadians)) };
+        const rad = (angleInDegrees) * Math.PI / 180.0;
+        return { x: centerX + (r * Math.cos(rad)), y: centerY + (r * Math.sin(rad)) };
     };
     const start = polarToCartesian(x, y, radius, endAngle);
     const end = polarToCartesian(x, y, radius, startAngle);
@@ -26,15 +29,12 @@ function describeArc(x, y, radius, startAngle, endAngle) {
     return `M ${start.x} ${start.y} A ${radius} ${radius} 0 ${largeArcFlag} 0 ${end.x} ${end.y}`;
 }
 
-// Dibuja los segmentos estáticos de fondo
 function createStaticSegments(container, segments, radius, color) {
     container.innerHTML = '';
     const angleStep = 360 / segments;
     for (let i = 0; i < segments; i++) {
         const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-        const startAngle = angleStep * i;
-        const endAngle = angleStep * (i + 1) - 2; // -2 para el espacio
-        path.setAttribute("d", describeArc(100, 100, radius, startAngle, endAngle));
+        path.setAttribute("d", describeArc(100, 100, radius, angleStep * i, angleStep * (i + 1) - 2));
         path.style.stroke = color;
         container.appendChild(path);
     }
@@ -46,7 +46,6 @@ const circumferences = rings.map(ring => 2 * Math.PI * ring.r.baseVal.value);
 
 rings.forEach((ring, i) => {
     ring.style.strokeDasharray = `${circumferences[i]} ${circumferences[i]}`;
-    ring.style.strokeDashoffset = circumferences[i];
 });
 
 function setProgress(ringIndex, percent) {
@@ -54,30 +53,26 @@ function setProgress(ringIndex, percent) {
     rings[ringIndex].style.strokeDashoffset = offset;
 }
 
-// --- LÓGICA PRINCIPAL DEL RELOJ ---
+// --- LÓGICA PRINCIPAL ---
 function updateClocks() {
     const now = new Date();
 
-    // 1. RELOJ DIARIO (07:00 a 23:00)
+    // 1. RELOJ DIARIO
     const blocks = [{ name: 'ichi', start: 7 }, { name: 'ni', start: 11 }, { name: 'san', start: 15 }, { name: 'shi', start: 19 }, { name: 'go', start: 23 }];
     const currentHour = now.getHours();
     let currentBlock = blocks.find((b, i) => {
-        const nextBlock = blocks[i + 1] || blocks[0];
-        const endHour = (nextBlock.start < b.start) ? 24 : nextBlock.start;
+        const next = blocks[i + 1] || blocks[0];
         if (b.start === 23) return currentHour >= 23 || currentHour < 7;
-        return currentHour >= b.start && currentHour < endHour;
+        return currentHour >= b.start && currentHour < next.start;
     });
-
     const dayStart = new Date(now).setHours(7, 0, 0, 0);
     const dayEnd = new Date(now).setHours(23, 0, 0, 0);
-
     let dayPercentRemaining = 100;
     if (now > dayStart && now < dayEnd) {
         dayPercentRemaining = 100 - ((now - dayStart) / (dayEnd - dayStart)) * 100;
     } else if (now >= dayEnd || now < dayStart) {
-        dayPercentRemaining = 0; // Fuera del horario despierto, el anillo está vacío
+        dayPercentRemaining = 0;
     }
-    
     dayBlockName.innerText = currentBlock.name;
     dayPercentage.innerText = `${dayPercentRemaining.toFixed(1)}%`;
     setProgress(0, dayPercentRemaining);
@@ -86,13 +81,14 @@ function updateClocks() {
     const dayOfWeek = (now.getDay() + 6) % 7;
     const secondsIntoWeek = (dayOfWeek * 86400) + (now.getHours() * 3600) + (now.getMinutes() * 60) + now.getSeconds();
     const weekPercentRemaining = 100 - (secondsIntoWeek / (7 * 86400)) * 100;
+    weekPercentage.innerText = `${weekPercentRemaining.toFixed(1)}%`;
     setProgress(1, weekPercentRemaining);
 
     // 3. RELOJ MENSUAL
-    const dayOfMonth = now.getDate() - 1;
+    const secondsIntoMonth = ((now.getDate() - 1) * 86400) + (now.getHours() * 3600) + (now.getMinutes() * 60) + now.getSeconds();
     const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
-    const secondsIntoMonth = (dayOfMonth * 86400) + (now.getHours() * 3600) + (now.getMinutes() * 60) + now.getSeconds();
     const monthPercentRemaining = 100 - (secondsIntoMonth / (daysInMonth * 86400)) * 100;
+    monthPercentage.innerText = `${monthPercentRemaining.toFixed(1)}%`;
     setProgress(2, monthPercentRemaining);
     
     // 4. RELOJ ANUAL
@@ -101,6 +97,7 @@ function updateClocks() {
     const isLeap = new Date(now.getFullYear(), 1, 29).getDate() === 29;
     const daysInYear = isLeap ? 366 : 365;
     const yearPercentRemaining = 100 - (dayOfYear / daysInYear) * 100;
+    yearPercentage.innerText = `${yearPercentRemaining.toFixed(1)}%`;
     setProgress(3, yearPercentRemaining);
 }
 
