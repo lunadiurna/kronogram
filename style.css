@@ -34,7 +34,7 @@ body {
     transform: rotate(-90deg);
 }
 
-/* Anillos, Divisores, Barra 'Go' */
+/* Anillos y Divisores (sin cambios) */
 #background-rings circle { fill: none; stroke: var(--ring-bg-color); stroke-width: 25; }
 #background-rings circle:nth-child(1) { stroke-width: 20; }
 #background-rings circle:nth-child(2) { stroke-width: 20; }
@@ -46,60 +46,29 @@ body {
 #week-ring  { stroke: var(--week-color);  stroke-width: 20; }
 #day-ring   { stroke: var(--day-color);   stroke-width: 25; }
 #dividers line { stroke: var(--divider-color); stroke-width: 2; stroke-linecap: round; }
-#go-bar { stroke: var(--go-color); stroke-width: 4; stroke-linecap: round; }
 
-/* Panel de Información */
-#labels {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px 30px;
-    width: 100%;
-    max-width: 400px;
+/* Barra 'Go' (CORREGIDA) */
+#go-bar {
+    stroke: var(--go-color);
+    stroke-width: 4;
+    stroke-linecap: round;
+    transform-origin: center; /* Asegura que la rotación sea desde el centro */
+    transform: rotate(90deg); /* Anula la rotación del SVG padre para quedar arriba */
 }
 
-.label-group {
-    display: flex;
-    flex-direction: column;
-    text-align: left;
-    padding-left: 10px;
-    border-left: 2px solid;
-}
-
-.label-title {
-    font-size: 0.9em;
-    opacity: 0.8;
-    text-transform: capitalize;
-}
-
-.label-value {
-    font-size: 1.5em;
-    font-weight: bold;
-}
-
-.label-fraction {
-    font-size: 0.8em;
-    opacity: 0.7;
-}
-
-#month-week-fraction {
-    margin-top: 4px; /* Pequeño margen para la nueva fracción */
-}
-
-/* Colores de los bordes y texto */
+/* Panel de Información y Etiquetas (sin cambios) */
+#labels { display: grid; grid-template-columns: 1fr 1fr; gap: 20px 30px; width: 100%; max-width: 400px; }
+.label-group { display: flex; flex-direction: column; text-align: left; padding-left: 10px; border-left: 2px solid; }
+.label-title { font-size: 0.9em; opacity: 0.8; text-transform: capitalize; }
+.label-value { font-size: 1.5em; font-weight: bold; }
+.label-fraction { font-size: 0.8em; opacity: 0.7; }
+#month-week-fraction { margin-top: 4px; }
 #day-label-group   { border-color: var(--day-color);   color: var(--day-color); }
 #week-label-group  { border-color: var(--week-color);  color: var(--week-color); }
 #month-label-group { border-color: var(--month-color); color: var(--month-color); }
 #year-label-group  { border-color: var(--year-color);  color: var(--year-color); }
 
-/* Diseño para pantallas más grandes */
 @media (min-width: 768px) {
-    body {
-        flex-direction: row;
-        justify-content: center;
-        align-items: center;
-    }
-    #labels {
-        grid-template-columns: 1fr;
-        max-width: 200px;
-    }
+    body { flex-direction: row; justify-content: center; align-items: center; }
+    #labels { grid-template-columns: 1fr; max-width: 200px; }
 }
