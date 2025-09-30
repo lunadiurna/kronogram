@@ -197,8 +197,8 @@ function initialize() {
     createRingSegments({
         container: daySegmentsContainer, // Usamos el nuevo contenedor
         segmentCount: 96,
-        radius: 60,
-        strokeWidth: 30,
+        radius: 50,
+        strokeWidth: 25,
         cssClass: 'day-segment',
         totalAngle: 352,
         startAngle: 4,
