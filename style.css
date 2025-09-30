@@ -44,7 +44,7 @@ body {
 /* Estilo base para todos los segmentos */
 .segment {
     fill: none; /* Los segmentos no tienen relleno */
-    stroke-linecap: round; /* Extremos redondeados */
+    stroke-linecap: butt;
     transition: stroke 0.3s ease, opacity 0.3s ease; /* Transición suave de colores */
 }
 
