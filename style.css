@@ -1,0 +1,84 @@
+:root {
+    --bg-color: #1a1a1a;
+    --text-color: #f0f0f0;
+    --ring-bg-color: #444;
+    --day-color: #ff6347; /* Tomate */
+    --week-color: #ffd700; /* Oro */
+    --month-color: #1e90ff; /* Azul Dodger */
+    --year-color: #32cd32; /* Verde Lima */
+}
+
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    text-align: center;
+}
+
+#clock-container {
+    position: relative;
+    width: 90vw;
+    max-width: 500px;
+}
+
+#clocks-svg {
+    transform: rotate(-90deg); /* Iniciar el anillo desde arriba */
+}
+
+.progress-ring-bg {
+    fill: transparent;
+    stroke: var(--ring-bg-color);
+    stroke-width: 8;
+}
+
+.progress-ring {
+    fill: transparent;
+    stroke-width: 8;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.5s linear;
+}
+
+#day-ring { stroke: var(--day-color); }
+#week-ring { stroke: var(--week-color); }
+#month-ring { stroke: var(--month-color); }
+#year-ring { stroke: var(--year-color); }
+
+#labels {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.label {
+    display: flex;
+    flex-direction: column;
+}
+
+#day-label {
+    font-size: 1.5em;
+    font-weight: bold;
+}
+#day-block-name {
+    text-transform: capitalize;
+}
+
+#week-label, #month-label, #year-label {
+    font-size: 0.8em;
+    opacity: 0.8;
+}
+
+/* Espaciado para que no se superpongan */
+#day-label { margin-bottom: 3.5em; }
+#week-label { margin-bottom: 2.5em; }
+#month-label { margin-bottom: 1.5em; }
