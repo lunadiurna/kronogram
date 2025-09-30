@@ -26,25 +26,24 @@ body {
     max-width: 500px;
 }
 
-/* Giramos todo el SVG para que el descuento sea horario desde arriba */
 #clocks-svg {
     transform: scaleX(-1) rotate(-90deg);
 }
 
-/* ---- CAPA 1: SEGMENTOS ESTÁTICOS ---- */
+/* ---- CAPA 1: SEGMENTOS ESTÁTICOS (AHORA MÁS VISIBLES) ---- */
 #static-segments path {
     fill: none;
     stroke-width: 8;
     stroke-linecap: butt;
-    opacity: 0.3; /* Los bloques de fondo son tenues */
+    opacity: 0.5; /* AUMENTAMOS LA OPACIDAD PARA QUE SE VEAN */
 }
 
 /* ---- CAPA 2: ANILLOS DE PROGRESO ---- */
 .progress-ring {
     fill: none;
-    stroke-width: 8.5; /* Ligeramente más grueso */
+    stroke-width: 8.5;
     stroke-linecap: round;
-    transition: stroke-dashoffset 1s linear; /* Animación suave */
+    transition: stroke-dashoffset 1s linear;
 }
 
 #day-ring   { stroke: var(--day-color); }
@@ -52,28 +51,40 @@ body {
 #month-ring { stroke: var(--month-color); }
 #year-ring  { stroke: var(--year-color); }
 
-/* ---- OTROS ELEMENTOS ---- */
 #go-bar {
     fill: var(--go-color);
     transform-origin: center;
-    /* Re-orientamos la barra 'Go' para compensar la rotación del SVG */
     transform: scaleX(-1) rotate(90deg); 
 }
 
+/* ---- ETIQUETAS (NUEVOS ESTILOS) ---- */
 #labels {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 1.5em;
-    font-weight: bold;
-    /* Re-orientamos las etiquetas para que se lean bien */
-    transform: scaleX(-1);
+    transform: scaleX(-1); /* Compensar rotación del SVG */
 }
 
-#day-block-name { text-transform: capitalize; }
-.label { display: flex; flex-direction: column; }
+.label-group {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+}
+.label-title {
+    font-size: 0.6em;
+    opacity: 0.7;
+    text-transform: capitalize;
+}
+.label-percentage {
+    font-size: 0.7em;
+    font-weight: bold;
+}
+
+/* Posicionamiento de cada etiqueta */
+#day-label-group { transform: translateY(-30px); font-size: 1.5em; }
+#week-label-group { transform: translateY(5px); }
+#month-label-group { transform: translateY(35px); }
+#year-label-group { transform: translateY(65px); }
