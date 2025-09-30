@@ -1,114 +1,119 @@
 // --- ELEMENTOS DEL DOM ---
-const daySegments = document.getElementById('day-segments');
-const weekSegments = document.getElementById('week-segments');
-const monthSegments = document.getElementById('month-segments');
-const yearSegments = document.getElementById('year-segments');
+const rings = {
+    day: document.getElementById('day-ring'),
+    week: document.getElementById('week-ring'),
+    month: document.getElementById('month-ring'),
+    year: document.getElementById('year-ring')
+};
+const labels = {
+    dayBlockName: document.getElementById('day-block-name'),
+    dayPercentage: document.getElementById('day-percentage'),
+    weekPercentage: document.getElementById('week-percentage'),
+    monthPercentage: document.getElementById('month-percentage'),
+    yearPercentage: document.getElementById('year-percentage')
+};
+const dividersContainer = document.getElementById('dividers');
 
-const dayRing = document.getElementById('day-ring');
-const weekRing = document.getElementById('week-ring');
-const monthRing = document.getElementById('month-ring');
-const yearRing = document.getElementById('year-ring');
+// --- CÁLCULOS INICIALES ---
+const circumferences = {
+    day: 2 * Math.PI * rings.day.r.baseVal.value,
+    week: 2 * Math.PI * rings.week.r.baseVal.value,
+    month: 2 * Math.PI * rings.month.r.baseVal.value,
+    year: 2 * Math.PI * rings.year.r.baseVal.value
+};
 
-// Etiquetas
-const dayBlockName = document.getElementById('day-block-name');
-const dayPercentage = document.getElementById('day-percentage');
-const weekPercentage = document.getElementById('week-percentage');
-const monthPercentage = document.getElementById('month-percentage');
-const yearPercentage = document.getElementById('year-percentage');
+// --- FUNCIONES DE DIBUJO ---
 
-
-// --- FUNCIONES AUXILIARES ---
-function describeArc(x, y, radius, startAngle, endAngle) {
-    const polarToCartesian = (centerX, centerY, r, angleInDegrees) => {
-        const rad = (angleInDegrees) * Math.PI / 180.0;
-        return { x: centerX + (r * Math.cos(rad)), y: centerY + (r * Math.sin(rad)) };
-    };
-    const start = polarToCartesian(x, y, radius, endAngle);
-    const end = polarToCartesian(x, y, radius, startAngle);
-    const largeArcFlag = endAngle - startAngle <= 180 ? "0" : "1";
-    return `M ${start.x} ${start.y} A ${radius} ${radius} 0 ${largeArcFlag} 0 ${end.x} ${end.y}`;
-}
-
-function createStaticSegments(container, segments, radius, color) {
-    container.innerHTML = '';
+// Dibuja las líneas divisorias radiales
+function createDividers(segments, outerRadius, innerRadius) {
     const angleStep = 360 / segments;
     for (let i = 0; i < segments; i++) {
-        const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-        path.setAttribute("d", describeArc(100, 100, radius, angleStep * i, angleStep * (i + 1) - 2));
-        path.style.stroke = color;
-        container.appendChild(path);
+        const angle = angleStep * i;
+        const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        
+        const start = polarToCartesian(100, 100, innerRadius, angle);
+        const end = polarToCartesian(100, 100, outerRadius, angle);
+
+        line.setAttribute('x1', start.x);
+        line.setAttribute('y1', start.y);
+        line.setAttribute('x2', end.x);
+        line.setAttribute('y2', end.y);
+        dividersContainer.appendChild(line);
     }
 }
 
-// --- CONFIGURACIÓN Y ANIMACIÓN DE ANILLOS ---
-const rings = [dayRing, weekRing, monthRing, yearRing];
-const circumferences = rings.map(ring => 2 * Math.PI * ring.r.baseVal.value);
+function polarToCartesian(cx, cy, r, angle) {
+    const rad = (angle - 90) * Math.PI / 180.0; // Ajuste de -90 para rotar el sistema de coordenadas
+    return { x: cx + (r * Math.cos(rad)), y: cy + (r * Math.sin(rad)) };
+}
 
-rings.forEach((ring, i) => {
-    ring.style.strokeDasharray = `${circumferences[i]} ${circumferences[i]}`;
-});
-
-function setProgress(ringIndex, percent) {
-    const offset = circumferences[ringIndex] - (percent / 100 * circumferences[ringIndex]);
-    rings[ringIndex].style.strokeDashoffset = offset;
+// Actualiza el llenado de un anillo
+function setProgress(ringKey, percent) {
+    const circumference = circumferences[ringKey];
+    // La animación de llenado es la inversa del vaciado
+    const offset = circumference * (1 - percent / 100);
+    rings[ringKey].style.strokeDasharray = `${circumference} ${circumference}`;
+    rings[ringKey].style.strokeDashoffset = offset;
 }
 
 // --- LÓGICA PRINCIPAL ---
 function updateClocks() {
     const now = new Date();
 
-    // 1. RELOJ DIARIO
+    // 1. ANILLO DIARIO (07:00 a 23:00)
     const blocks = [{ name: 'ichi', start: 7 }, { name: 'ni', start: 11 }, { name: 'san', start: 15 }, { name: 'shi', start: 19 }, { name: 'go', start: 23 }];
     const currentHour = now.getHours();
     let currentBlock = blocks.find((b, i) => {
-        const next = blocks[i + 1] || blocks[0];
-        if (b.start === 23) return currentHour >= 23 || currentHour < 7;
+        const next = blocks[i+1] || blocks[0];
+        if (b.name === 'go') return currentHour >= b.start || currentHour < next.start;
         return currentHour >= b.start && currentHour < next.start;
-    });
+    }) || { name: 'go' };
+    
     const dayStart = new Date(now).setHours(7, 0, 0, 0);
     const dayEnd = new Date(now).setHours(23, 0, 0, 0);
-    let dayPercentRemaining = 100;
+    let dayPercent = 0;
     if (now > dayStart && now < dayEnd) {
-        dayPercentRemaining = 100 - ((now - dayStart) / (dayEnd - dayStart)) * 100;
-    } else if (now >= dayEnd || now < dayStart) {
-        dayPercentRemaining = 0;
+        dayPercent = ((now - dayStart) / (dayEnd - dayStart)) * 100;
+    } else if (now >= dayEnd) {
+        dayPercent = 100;
     }
-    dayBlockName.innerText = currentBlock.name;
-    dayPercentage.innerText = `${dayPercentRemaining.toFixed(1)}%`;
-    setProgress(0, dayPercentRemaining);
+    
+    labels.dayBlockName.innerText = currentBlock.name;
+    labels.dayPercentage.innerText = `${dayPercent.toFixed(1)}%`;
+    setProgress('day', dayPercent);
 
-    // 2. RELOJ SEMANAL
-    const dayOfWeek = (now.getDay() + 6) % 7;
+    // 2. ANILLO SEMANAL
+    const dayOfWeek = (now.getDay() === 0) ? 6 : now.getDay() - 1; // Lunes=0, Domingo=6
     const secondsIntoWeek = (dayOfWeek * 86400) + (now.getHours() * 3600) + (now.getMinutes() * 60) + now.getSeconds();
-    const weekPercentRemaining = 100 - (secondsIntoWeek / (7 * 86400)) * 100;
-    weekPercentage.innerText = `${weekPercentRemaining.toFixed(1)}%`;
-    setProgress(1, weekPercentRemaining);
+    const weekPercent = (secondsIntoWeek / (7 * 86400)) * 100;
+    labels.weekPercentage.innerText = `${weekPercent.toFixed(1)}%`;
+    setProgress('week', weekPercent);
 
-    // 3. RELOJ MENSUAL
+    // 3. ANILLO MENSUAL
     const secondsIntoMonth = ((now.getDate() - 1) * 86400) + (now.getHours() * 3600) + (now.getMinutes() * 60) + now.getSeconds();
     const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
-    const monthPercentRemaining = 100 - (secondsIntoMonth / (daysInMonth * 86400)) * 100;
-    monthPercentage.innerText = `${monthPercentRemaining.toFixed(1)}%`;
-    setProgress(2, monthPercentRemaining);
+    const monthPercent = (secondsIntoMonth / (daysInMonth * 86400)) * 100;
+    labels.monthPercentage.innerText = `${monthPercent.toFixed(1)}%`;
+    setProgress('month', monthPercent);
     
-    // 4. RELOJ ANUAL
-    const startOfYear = new Date(now.getFullYear(), 0, 0);
-    const dayOfYear = Math.floor((now - startOfYear) / (1000 * 60 * 60 * 24));
+    // 4. ANILLO ANUAL
+    const startOfYear = new Date(now.getFullYear(), 0, 1);
+    const secondsIntoYear = (now - startOfYear) / 1000;
     const isLeap = new Date(now.getFullYear(), 1, 29).getDate() === 29;
-    const daysInYear = isLeap ? 366 : 365;
-    const yearPercentRemaining = 100 - (dayOfYear / daysInYear) * 100;
-    yearPercentage.innerText = `${yearPercentRemaining.toFixed(1)}%`;
-    setProgress(3, yearPercentRemaining);
+    const secondsInYear = (isLeap ? 366 : 365) * 86400;
+    const yearPercent = (secondsIntoYear / secondsInYear) * 100;
+    labels.yearPercentage.innerText = `${yearPercent.toFixed(1)}%`;
+    setProgress('year', yearPercent);
 }
 
 // --- INICIALIZACIÓN ---
 function initialize() {
-    const style = getComputedStyle(document.body);
-    createStaticSegments(daySegments, 4, 45, style.getPropertyValue('--day-color'));
-    createStaticSegments(weekSegments, 7, 60, style.getPropertyValue('--week-color'));
-    createStaticSegments(monthSegments, 4, 75, style.getPropertyValue('--month-color'));
-    createStaticSegments(yearSegments, 12, 90, style.getPropertyValue('--year-color'));
-    
+    // Dibujar las líneas divisorias
+    createDividers(12, 100, 80); // Año
+    createDividers(4, 85, 65);  // Mes
+    createDividers(7, 70, 50);  // Semana
+    createDividers(4, 57.5, 32.5); // Día
+
     setInterval(updateClocks, 1000);
     updateClocks();
 }
