@@ -33,51 +33,28 @@ const labels = {
 /**
  * Dibuja un anillo compuesto por múltiples segmentos.
  * @param {object} config - Objeto de configuración.
- * @param {SVGElement} config.container - El grupo SVG donde se añadirán los segmentos.
- * @param {number} config.segmentCount - Número de segmentos a dibujar.
- * @param {number} config.radius - El radio del anillo.
- * @param {number} config.strokeWidth - El grosor de cada segmento.
- * @param {string} config.cssClass - La clase CSS base para los segmentos.
- * @param {number} [config.totalAngle=360] - El ángulo total que ocupa el anillo.
- * @param {number} [config.startAngle=0] - El ángulo donde empieza el primer segmento.
- * @param {number} [config.gapDegrees=1] - El espacio en grados entre segmentos.
  */
 function createRingSegments(config) {
     const { container, segmentCount, radius, strokeWidth, cssClass, totalAngle = 360, startAngle = 0, gapDegrees = 1 } = config;
-    
-    // Limpiar el contenedor antes de dibujar
     container.innerHTML = ''; 
-
-    // Calcula el ángulo que ocupa cada segmento, restando los espacios
     const anglePerSegment = (totalAngle - (segmentCount * gapDegrees)) / segmentCount;
 
     for (let i = 0; i < segmentCount; i++) {
-        // Calcula los ángulos de inicio y fin para este segmento
         const segmentStartAngle = startAngle + (i * (anglePerSegment + gapDegrees));
         const segmentEndAngle = segmentStartAngle + anglePerSegment;
-
-        // Crea un elemento SVG <path>
         const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
         path.setAttribute("d", describeArc(100, 100, radius, segmentStartAngle, segmentEndAngle));
-        path.setAttribute("class", `segment ${cssClass} segment-future`); // Estado inicial: futuro
+        path.setAttribute("class", `segment ${cssClass} segment-future`);
         path.style.strokeWidth = strokeWidth;
-        
-        // Añade el segmento al contenedor en el DOM
         container.appendChild(path);
     }
 }
 
 /**
  * Genera la descripción de un arco SVG (el atributo 'd' de un <path>).
- * @param {number} x - Coordenada X del centro.
- * @param {number} y - Coordenada Y del centro.
- * @param {number} radius - Radio del arco.
- * @param {number} startAngle - Ángulo de inicio en grados.
- * @param {number} endAngle - Ángulo de fin en grados.
  * @returns {string} - El valor para el atributo 'd'.
  */
 function describeArc(x, y, radius, startAngle, endAngle) {
-    // Convierte un ángulo y radio a coordenadas cartesianas (x, y)
     const polarToCartesian = (centerX, centerY, r, angleInDegrees) => {
         const rad = (angleInDegrees) * Math.PI / 180.0;
         return { x: centerX + (r * Math.cos(rad)), y: centerY + (r * Math.sin(rad)) };
@@ -133,19 +110,20 @@ function updateClocks() {
     const dayStart = new Date(now).setHours(7, 0, 0, 0);
     const goSegment = document.getElementById('go-segment');
     
+    // Obtiene los segmentos del día (excluyendo el contenedor del 'Go' segment)
+    const daySegmentsContainer = document.getElementById('day-segments-container');
+
     if (currentBlock.name === 'go') {
-        // Si es de noche, reseteamos los segmentos del día y activamos el de 'Go'
-        updateSegmentStates(segmentContainers.day, -1); // -1 para que ninguno esté activo
-        goSegment.classList.add('segment-active');
+        updateSegmentStates(daySegmentsContainer, -1);
+        if (goSegment) goSegment.classList.add('segment-active');
     } else {
-        // Si es de día, calculamos el segmento de 10 minutos actual
-        goSegment.classList.remove('segment-active');
+        if (goSegment) goSegment.classList.remove('segment-active');
         const minutesPassedSinceStart = (now - dayStart) / 60000;
         const activeDayIndex = Math.floor(minutesPassedSinceStart / 10);
-        updateSegmentStates(segmentContainers.day, activeDayIndex);
+        updateSegmentStates(daySegmentsContainer, activeDayIndex);
     }
     
-    // Actualizar panel de información (lógica de fracciones sin cambios)
+    // Actualizar panel de información
     const dayEnd = new Date(now).setHours(23, 0, 0, 0);
     let dayPercentPassed = (now < dayStart || now >= dayEnd) ? 100 : ((now - dayStart) / (dayEnd - dayStart)) * 100;
     const dayPercentRemaining = 100 - dayPercentPassed;
@@ -155,9 +133,8 @@ function updateClocks() {
     labels.dayFraction.innerText = `${hoursRemaining}/16 hrs`;
 
     // --- 2. LÓGICA DEL ANILLO SEMANAL ---
-    const activeWeekIndex = (now.getDay() === 0) ? 6 : now.getDay() - 1; // Lunes=0
+    const activeWeekIndex = (now.getDay() === 0) ? 6 : now.getDay() - 1;
     updateSegmentStates(segmentContainers.week, activeWeekIndex);
-    // (Actualizar panel de información...)
     const daysRemainingInWeek = 7 - activeWeekIndex;
     const weekPercentRemaining = 100 - ((activeWeekIndex / 7) * 100);
     labels.weekValue.innerText = (weekPercentRemaining / 100).toFixed(2);
@@ -165,9 +142,8 @@ function updateClocks() {
 
     // --- 3. LÓGICA DEL ANILLO MENSUAL ---
     const dayOfMonth = now.getDate();
-    const activeMonthIndex = Math.ceil(dayOfMonth / 7) - 1; // Semana actual como índice
+    const activeMonthIndex = Math.ceil(dayOfMonth / 7) - 1;
     updateSegmentStates(segmentContainers.month, activeMonthIndex);
-    // (Actualizar panel de información...)
     const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
     const totalWeeksInMonth = Math.ceil(daysInMonth / 7);
     const monthPercentRemaining = 100 - (((dayOfMonth - 1) / daysInMonth) * 100);
@@ -176,9 +152,8 @@ function updateClocks() {
     labels.monthWeekFraction.innerText = `${activeMonthIndex + 1}/${totalWeeksInMonth} semanas`;
 
     // --- 4. LÓGICA DEL ANILLO ANUAL ---
-    const activeYearIndex = now.getMonth(); // Enero=0
+    const activeYearIndex = now.getMonth();
     updateSegmentStates(segmentContainers.year, activeYearIndex);
-    // (Actualizar panel de información...)
     const dayOfYear = Math.floor((now - new Date(now.getFullYear(), 0, 1)) / 86400000) + 1;
     const daysInYear = new Date(now.getFullYear(), 1, 29).getDate() === 29 ? 366 : 365;
     const daysRemainingInYear = daysInYear - dayOfYear;
@@ -190,65 +165,49 @@ function updateClocks() {
 
 
 // =================================================================================
-// 4. INICIALIZACIÓN (Se ejecuta 1 vez al cargar la página)
+// 4. INICIALIZACIÓN (CORREGIDA)
 // =================================================================================
 
 function initialize() {
     console.log("Inicializando Reloj Segmentado...");
 
-    // --- DIBUJAR LOS ANILLOS ---
-
-    // Anillo ANUAL: 12 segmentos
-    createRingSegments({
-        container: segmentContainers.year,
-        segmentCount: 12,
-        radius: 90,
-        strokeWidth: 18,
-        cssClass: 'year-segment',
-        gapDegrees: 2
-    });
-
-    // Anillo MENSUAL: dibujamos 5 segmentos, JS se encarga de activar los que correspondan
-    createRingSegments({
-        container: segmentContainers.month,
-        segmentCount: 5,
-        radius: 70,
-        strokeWidth: 18,
-        cssClass: 'month-segment',
-        gapDegrees: 3
-    });
-
-    // Anillo SEMANAL: 7 segmentos
-    createRingSegments({
-        container: segmentContainers.week,
-        segmentCount: 7,
-        radius: 50,
-        strokeWidth: 18,
-        cssClass: 'week-segment',
-        gapDegrees: 3
-    });
+    // --- DIBUJAR LOS ANILLOS SIMPLES ---
+    createRingSegments({ container: segmentContainers.year, segmentCount: 12, radius: 90, strokeWidth: 18, cssClass: 'year-segment', gapDegrees: 2 });
+    createRingSegments({ container: segmentContainers.month, segmentCount: 5, radius: 70, strokeWidth: 18, cssClass: 'month-segment', gapDegrees: 3 });
+    createRingSegments({ container: segmentContainers.week, segmentCount: 7, radius: 50, strokeWidth: 18, cssClass: 'week-segment', gapDegrees: 3 });
     
-    // Anillo DIARIO: el más complejo
-    // Primero, creamos el segmento especial 'Go' en la parte superior.
-    const goContainer = document.createElementNS("http://www.w3.org/2000/svg", "g");
-    goContainer.innerHTML = `<path id="go-segment" class="segment" d="${describeArc(100, 100, 30, -2, 2)}" style="stroke-width: 23px;"></path>`;
-    segmentContainers.day.appendChild(goContainer);
+    // --- CORRECCIÓN CLAVE: DIBUJAR EL ANILLO DIARIO DE FORMA SEGURA ---
+    // Limpiamos el contenedor principal del día.
+    segmentContainers.day.innerHTML = '';
+    
+    // 1. Creamos y añadimos el segmento especial 'Go'.
+    const goPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    goPath.setAttribute("id", "go-segment");
+    goPath.setAttribute("class", "segment"); // Clase base
+    goPath.setAttribute("d", describeArc(100, 100, 30, -2, 2));
+    goPath.style.strokeWidth = "23px";
+    segmentContainers.day.appendChild(goPath);
 
-    // Luego, creamos los 96 segmentos para las horas activas en el resto del círculo.
+    // 2. Creamos un NUEVO contenedor solo para los 96 segmentos de las horas activas.
+    const daySegmentsContainer = document.createElementNS("http://www.w3.org/2000/svg", "g");
+    daySegmentsContainer.setAttribute("id", "day-segments-container");
+    segmentContainers.day.appendChild(daySegmentsContainer);
+
+    // 3. Llenamos este nuevo contenedor con los 96 segmentos, sin borrar el de 'Go'.
     createRingSegments({
-        container: segmentContainers.day,
+        container: daySegmentsContainer, // Usamos el nuevo contenedor
         segmentCount: 96,
         radius: 30,
         strokeWidth: 23,
         cssClass: 'day-segment',
-        totalAngle: 352, // Dejamos 8 grados para el segmento 'Go' y sus espacios
-        startAngle: 4,   // Empezamos un poco después del segmento 'Go'
+        totalAngle: 352,
+        startAngle: 4,
         gapDegrees: 0.7
     });
 
     // --- INICIAR EL CICLO DE ACTUALIZACIÓN ---
     setInterval(updateClocks, 1000);
-    updateClocks(); // Llamada inicial para no esperar 1 segundo
+    updateClocks();
 }
 
 // Iniciar todo el proceso cuando la página esté lista.
