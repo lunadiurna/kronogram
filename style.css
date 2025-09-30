@@ -1,11 +1,11 @@
 :root {
     --bg-color: #1a1a1a;
     --text-color: #f0f0f0;
-    --ring-bg-color: #444;
-    --day-color: #ff6347; /* Tomate */
-    --week-color: #ffd700; /* Oro */
+    --day-color: #ff6347;   /* Tomate */
+    --week-color: #ffd700;  /* Oro */
     --month-color: #1e90ff; /* Azul Dodger */
-    --year-color: #32cd32; /* Verde Lima */
+    --year-color: #32cd32;  /* Verde Lima */
+    --go-color: #9370db;    /* Violeta */
 }
 
 body {
@@ -26,27 +26,39 @@ body {
     max-width: 500px;
 }
 
+/* Giramos todo el SVG para que el descuento sea horario desde arriba */
 #clocks-svg {
-    transform: rotate(-90deg); /* Iniciar el anillo desde arriba */
+    transform: scaleX(-1) rotate(-90deg);
 }
 
-.progress-ring-bg {
-    fill: transparent;
-    stroke: var(--ring-bg-color);
+/* ---- CAPA 1: SEGMENTOS ESTÁTICOS ---- */
+#static-segments path {
+    fill: none;
     stroke-width: 8;
+    stroke-linecap: butt;
+    opacity: 0.3; /* Los bloques de fondo son tenues */
 }
 
+/* ---- CAPA 2: ANILLOS DE PROGRESO ---- */
 .progress-ring {
-    fill: transparent;
-    stroke-width: 8;
+    fill: none;
+    stroke-width: 8.5; /* Ligeramente más grueso */
     stroke-linecap: round;
-    transition: stroke-dashoffset 0.5s linear;
+    transition: stroke-dashoffset 1s linear; /* Animación suave */
 }
 
-#day-ring { stroke: var(--day-color); }
-#week-ring { stroke: var(--week-color); }
+#day-ring   { stroke: var(--day-color); }
+#week-ring  { stroke: var(--week-color); }
 #month-ring { stroke: var(--month-color); }
-#year-ring { stroke: var(--year-color); }
+#year-ring  { stroke: var(--year-color); }
+
+/* ---- OTROS ELEMENTOS ---- */
+#go-bar {
+    fill: var(--go-color);
+    transform-origin: center;
+    /* Re-orientamos la barra 'Go' para compensar la rotación del SVG */
+    transform: scaleX(-1) rotate(90deg); 
+}
 
 #labels {
     position: absolute;
@@ -55,30 +67,13 @@ body {
     width: 100%;
     height: 100%;
     display: flex;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
-}
-
-.label {
-    display: flex;
-    flex-direction: column;
-}
-
-#day-label {
     font-size: 1.5em;
     font-weight: bold;
-}
-#day-block-name {
-    text-transform: capitalize;
-}
-
-#week-label, #month-label, #year-label {
-    font-size: 0.8em;
-    opacity: 0.8;
+    /* Re-orientamos las etiquetas para que se lean bien */
+    transform: scaleX(-1);
 }
 
-/* Espaciado para que no se superpongan */
-#day-label { margin-bottom: 3.5em; }
-#week-label { margin-bottom: 2.5em; }
-#month-label { margin-bottom: 1.5em; }
+#day-block-name { text-transform: capitalize; }
+.label { display: flex; flex-direction: column; }
