@@ -3,41 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reloj de Bloques</title>
+    <title>Reloj de Bloques 3.0</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div id="clock-container">
-        <svg id="clocks-svg" viewbox="0 0 200 200">
-            <circle class="progress-ring-bg" cx="100" cy="100" r="90" />
-            <circle id="year-ring" class="progress-ring" cx="100" cy="100" r="90" />
+        <svg id="clocks-svg" viewBox="0 0 200 200">
+            <g id="static-segments">
+                <g id="year-segments"></g>
+                <g id="month-segments"></g>
+                <g id="week-segments"></g>
+                <g id="day-segments"></g>
+            </g>
             
-            <circle class="progress-ring-bg" cx="100" cy="100" r="75" />
-            <circle id="month-ring" class="progress-ring" cx="100" cy="100" r="75" />
-            
-            <circle class="progress-ring-bg" cx="100" cy="100" r="60" />
-            <circle id="week-ring" class="progress-ring" cx="100" cy="100" r="60" />
+            <g id="progress-rings">
+                <circle id="year-ring" class="progress-ring" cx="100" cy="100" r="90" />
+                <circle id="month-ring" class="progress-ring" cx="100" cy="100" r="75" />
+                <circle id="week-ring" class="progress-ring" cx="100" cy="100" r="60" />
+                <circle id="day-ring" class="progress-ring" cx="100" cy="100" r="45" />
+            </g>
 
-            <circle class="progress-ring-bg" cx="100" cy="100" r="45" />
-            <circle id="day-ring" class="progress-ring" cx="100" cy="100" r="45" />
+            <path id="go-bar" d="M 95 10 A 5 5 0 0 1 105 10 L 105 12 A 5 5 0 0 1 95 12 Z" />
         </svg>
 
         <div id="labels">
             <div id="day-label" class="label">
                 <span id="day-block-name">--</span>
                 <span id="day-percentage">--%</span>
-            </div>
-            <div id="week-label" class="label">
-                <span>Semana</span>
-                <span id="week-percentage">--%</span>
-            </div>
-            <div id="month-label" class="label">
-                <span>Mes</span>
-                <span id="month-percentage">--%</span>
-            </div>
-            <div id="year-label" class="label">
-                <span>Año</span>
-                <span id="year-percentage">--%</span>
             </div>
         </div>
     </div>
