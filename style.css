@@ -6,6 +6,7 @@
     --week-color: #69f0ae;  /* Verde menta */
     --month-color: #ffd740; /* Amarillo */
     --year-color: #40c4ff;  /* Azul cielo */
+    --go-color: #9370db;    /* Violeta */
     --divider-color: #111;
 }
 
@@ -28,7 +29,7 @@ body {
 }
 
 #clocks-svg {
-    transform: rotate(-90deg); /* El punto de inicio es arriba (12 en punto) */
+    transform: scaleX(-1) rotate(-90deg); /* Vaciado en sentido horario */
 }
 
 /* Capa 1: Fondos */
@@ -37,17 +38,15 @@ body {
     stroke: var(--ring-bg-color);
     stroke-width: 25;
 }
-/* Hacemos cada anillo más delgado para que coincida con el dibujo */
 #background-rings circle:nth-child(1) { stroke-width: 20; }
 #background-rings circle:nth-child(2) { stroke-width: 20; }
 #background-rings circle:nth-child(3) { stroke-width: 20; }
 #background-rings circle:nth-child(4) { stroke-width: 25; }
 
-
 /* Capa 2: Anillos de Progreso */
 .progress-ring {
     fill: none;
-    stroke-linecap: butt; /* Extremos rectos para que el llenado sea exacto */
+    stroke-linecap: round; /* Extremos redondeados para vaciado suave */
     transition: stroke-dashoffset 1s linear;
 }
 #year-ring  { stroke: var(--year-color);  stroke-width: 20; }
@@ -62,6 +61,14 @@ body {
     stroke-linecap: round;
 }
 
+/* Barra 'Go' */
+#go-bar {
+    stroke: var(--go-color);
+    stroke-width: 4;
+    stroke-linecap: round;
+    transform: scaleX(-1); /* Compensar el giro del SVG */
+}
+
 /* Etiquetas con colores */
 #labels {
     position: absolute;
@@ -70,21 +77,11 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    transform: scaleX(-1); /* Compensar giro */
 }
-.label-group {
-    position: absolute;
-    display: flex;
-    flex-direction: column;
-}
-.label-title {
-    font-size: 0.7em;
-    opacity: 0.9;
-    text-transform: capitalize;
-    font-weight: bold;
-}
-.label-percentage {
-    font-size: 0.8em;
-}
+.label-group { position: absolute; display: flex; flex-direction: column; }
+.label-title { font-size: 0.7em; opacity: 0.9; text-transform: capitalize; font-weight: bold; }
+.label-percentage { font-size: 0.8em; }
 
 /* Colores y Posiciones de Etiquetas */
 #day-label-group   { color: var(--day-color);   transform: translateY(-45px); font-size: 1.4em;}
