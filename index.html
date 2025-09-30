@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reloj de Bloques Definitivo</title>
+    <title>Reloj de Bloques (Diseño Final)</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div id="clock-container">
         <svg id="clocks-svg" viewBox="0 0 200 200">
-            <g id="static-segments">
-                <g id="year-segments"></g>
-                <g id="month-segments"></g>
-                <g id="week-segments"></g>
-                <g id="day-segments"></g>
+            <g id="background-rings">
+                <circle cx="100" cy="100" r="90" />
+                <circle cx="100" cy="100" r="75" />
+                <circle cx="100" cy="100" r="60" />
+                <circle cx="100" cy="100" r="45" />
             </g>
-            
+
             <g id="progress-rings">
                 <circle id="year-ring" class="progress-ring" cx="100" cy="100" r="90" />
                 <circle id="month-ring" class="progress-ring" cx="100" cy="100" r="75" />
@@ -23,7 +23,7 @@
                 <circle id="day-ring" class="progress-ring" cx="100" cy="100" r="45" />
             </g>
 
-            <path id="go-bar" d="M 95 10 A 5 5 0 0 1 105 10 L 105 12 A 5 5 0 0 1 95 12 Z" />
+            <g id="dividers"></g>
         </svg>
 
         <div id="labels">
