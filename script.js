@@ -1,4 +1,4 @@
-// --- ELEMENTOS DEL DOM ---
+// --- ELEMENTOS DEL DOM y CÁLCULOS INICIALES (sin cambios) ---
 const rings = {
     day: document.getElementById('day-ring'),
     week: document.getElementById('week-ring'),
@@ -14,7 +14,6 @@ const labels = {
 };
 const dividersContainer = document.getElementById('dividers');
 
-// --- CÁLCULOS INICIALES ---
 const circumferences = {
     day: 2 * Math.PI * rings.day.r.baseVal.value,
     week: 2 * Math.PI * rings.week.r.baseVal.value,
@@ -22,7 +21,7 @@ const circumferences = {
     year: 2 * Math.PI * rings.year.r.baseVal.value
 };
 
-// --- FUNCIONES DE DIBUJO ---
+// --- FUNCIONES DE DIBUJO (sin cambios) ---
 function createDividers(segments, outerRadius, innerRadius) {
     const angleStep = 360 / segments;
     for (let i = 0; i < segments; i++) {
@@ -43,19 +42,20 @@ function polarToCartesian(cx, cy, r, angle) {
     return { x: cx + (r * Math.cos(rad)), y: cy + (r * Math.sin(rad)) };
 }
 
-// Actualiza el vaciado de un anillo
-function setProgress(ringKey, percentRemaining) {
+// --- LÓGICA DE ANIMACIÓN CORREGIDA ---
+// Ahora la función usa el porcentaje que ha PASADO para calcular el vaciado
+function setProgress(ringKey, percentPassed) {
     const circumference = circumferences[ringKey];
-    const offset = circumference - (percentRemaining / 100 * circumference);
+    const offset = (percentPassed / 100) * circumference; // Esta es la nueva lógica
     rings[ringKey].style.strokeDasharray = `${circumference} ${circumference}`;
     rings[ringKey].style.strokeDashoffset = offset;
 }
 
-// --- LÓGICA PRINCIPAL ---
+// --- LÓGICA PRINCIPAL CORREGIDA ---
 function updateClocks() {
     const now = new Date();
 
-    // 1. ANILLO DIARIO (07:00 a 23:00)
+    // 1. ANILLO DIARIO
     const blocks = [{ name: 'ichi', start: 7 }, { name: 'ni', start: 11 }, { name: 'san', start: 15 }, { name: 'shi', start: 19 }, { name: 'go', start: 23 }];
     const currentHour = now.getHours();
     let currentBlock = blocks.find((b, i) => {
@@ -72,43 +72,42 @@ function updateClocks() {
     } else if (now >= dayEnd) {
         dayPercentPassed = 100;
     }
-    const dayPercentRemaining = 100 - dayPercentPassed;
     
+    // Mostramos el porcentaje restante, pero animamos con el porcentaje pasado
     labels.dayBlockName.innerText = currentBlock.name;
-    labels.dayPercentage.innerText = `${dayPercentRemaining.toFixed(1)}%`;
-    setProgress('day', dayPercentRemaining);
+    labels.dayPercentage.innerText = `${(100 - dayPercentPassed).toFixed(1)}%`;
+    setProgress('day', dayPercentPassed);
 
     // 2. ANILLO SEMANAL
-    const dayOfWeek = (now.getDay() === 0) ? 6 : now.getDay() - 1; // Lunes=0
+    const dayOfWeek = (now.getDay() === 0) ? 6 : now.getDay() - 1;
     const secondsIntoWeek = (dayOfWeek * 86400) + (now.getHours() * 3600) + (now.getMinutes() * 60) + now.getSeconds();
-    const weekPercentRemaining = 100 - (secondsIntoWeek / (7 * 86400)) * 100;
-    labels.weekPercentage.innerText = `${weekPercentRemaining.toFixed(1)}%`;
-    setProgress('week', weekPercentRemaining);
+    const weekPercentPassed = (secondsIntoWeek / (7 * 86400)) * 100;
+    labels.weekPercentage.innerText = `${(100 - weekPercentPassed).toFixed(1)}%`;
+    setProgress('week', weekPercentPassed);
 
     // 3. ANILLO MENSUAL
     const secondsIntoMonth = ((now.getDate() - 1) * 86400) + (now.getHours() * 3600) + (now.getMinutes() * 60) + now.getSeconds();
     const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
-    const monthPercentRemaining = 100 - (secondsIntoMonth / (daysInMonth * 86400)) * 100;
-    labels.monthPercentage.innerText = `${monthPercentRemaining.toFixed(1)}%`;
-    setProgress('month', monthPercentRemaining);
+    const monthPercentPassed = (secondsIntoMonth / (daysInMonth * 86400)) * 100;
+    labels.monthPercentage.innerText = `${(100 - monthPercentPassed).toFixed(1)}%`;
+    setProgress('month', monthPercentPassed);
     
     // 4. ANILLO ANUAL
     const startOfYear = new Date(now.getFullYear(), 0, 1);
     const secondsIntoYear = (now - startOfYear) / 1000;
     const isLeap = new Date(now.getFullYear(), 1, 29).getDate() === 29;
     const secondsInYear = (isLeap ? 366 : 365) * 86400;
-    const yearPercentRemaining = 100 - (secondsIntoYear / secondsInYear) * 100;
-    labels.yearPercentage.innerText = `${yearPercentRemaining.toFixed(1)}%`;
-    setProgress('year', yearPercentRemaining);
+    const yearPercentPassed = (secondsIntoYear / secondsInYear) * 100;
+    labels.yearPercentage.innerText = `${(100 - yearPercentPassed).toFixed(1)}%`;
+    setProgress('year', yearPercentPassed);
 }
 
-// --- INICIALIZACIÓN ---
+// --- INICIALIZACIÓN (sin cambios) ---
 function initialize() {
-    // Dibujar las líneas divisorias
-    createDividers(12, 100, 80); // Año
-    createDividers(4, 85, 65);  // Mes
-    createDividers(7, 70, 50);  // Semana
-    createDividers(4, 57.5, 32.5); // Día
+    createDividers(12, 100, 80);
+    createDividers(4, 85, 65);
+    createDividers(7, 70, 50);
+    createDividers(4, 57.5, 32.5);
 
     setInterval(updateClocks, 1000);
     updateClocks();
