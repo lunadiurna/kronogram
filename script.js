@@ -13,13 +13,13 @@ const labels = {
     weekFraction: document.getElementById('week-fraction'),
     monthValue: document.getElementById('month-value'),
     monthFraction: document.getElementById('month-fraction'),
-    monthWeekFraction: document.getElementById('month-week-fraction'), // Nuevo elemento
+    monthWeekFraction: document.getElementById('month-week-fraction'),
     yearValue: document.getElementById('year-value'),
     yearFraction: document.getElementById('year-fraction'),
     yearDaysFraction: document.getElementById('year-days-fraction'),
 };
 const dividersContainer = document.getElementById('dividers');
-const goBar = document.getElementById('go-bar'); // Nuevo elemento
+const goBar = document.getElementById('go-bar');
 
 // --- CÁLCULOS INICIALES ---
 const circumferences = {
@@ -68,7 +68,6 @@ function updateClocks() {
         return currentHour >= b.start && currentHour < next.start;
     }) || { name: 'go' };
     
-    // Lógica para mostrar/ocultar la barra 'Go'
     goBar.style.display = (currentBlock.name === 'go') ? 'block' : 'none';
 
     const dayStart = new Date(now).setHours(7, 0, 0, 0);
@@ -99,8 +98,8 @@ function updateClocks() {
     const monthPercentPassed = ((dayOfMonth - 1) / daysInMonth) * 100;
     const monthPercentRemaining = 100 - monthPercentPassed;
     labels.monthValue.innerText = (monthPercentRemaining / 100).toFixed(2);
-    labels.monthFraction.innerText = `${dayOfMonth}/${daysInMonth} días`; // Unidad añadida
-    labels.monthWeekFraction.innerText = `${weekOfMonth}/${totalWeeksInMonth} semanas`; // Nueva fracción
+    labels.monthFraction.innerText = `${dayOfMonth}/${daysInMonth} días`;
+    labels.monthWeekFraction.innerText = `${weekOfMonth}/${totalWeeksInMonth} semanas`;
     setProgress('month', monthPercentRemaining);
     
     // 4. ANILLO ANUAL
@@ -117,9 +116,9 @@ function updateClocks() {
     setProgress('year', yearPercentRemaining);
 }
 
-// --- INICIALIZACIÓN ---
+// --- INICIALIZACIÓN (CORREGIDA) ---
 function initialize() {
-    // Se eliminaron las líneas perpendiculares que cruzaban todo
+    // Eliminamos la línea que dibujaba los 4 divisores del mes que cruzaban todo
     createDividers(12, 100, 80);  // Divisores solo para el anillo del Año
     createDividers(7, 70, 50);   // Divisores solo para el anillo de la Semana
     createDividers(4, 57.5, 32.5); // Divisores solo para el anillo del Día
