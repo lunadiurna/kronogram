@@ -1,4 +1,4 @@
-// --- ELEMENTOS DEL DOM (Actualizado) ---
+// --- ELEMENTOS DEL DOM ---
 const rings = {
     day: document.getElementById('day-ring'),
     week: document.getElementById('week-ring'),
@@ -13,13 +13,15 @@ const labels = {
     weekFraction: document.getElementById('week-fraction'),
     monthValue: document.getElementById('month-value'),
     monthFraction: document.getElementById('month-fraction'),
+    monthWeekFraction: document.getElementById('month-week-fraction'), // Nuevo elemento
     yearValue: document.getElementById('year-value'),
     yearFraction: document.getElementById('year-fraction'),
     yearDaysFraction: document.getElementById('year-days-fraction'),
 };
 const dividersContainer = document.getElementById('dividers');
+const goBar = document.getElementById('go-bar'); // Nuevo elemento
 
-// --- CÁLCULOS INICIALES (sin cambios) ---
+// --- CÁLCULOS INICIALES ---
 const circumferences = {
     day: 2 * Math.PI * rings.day.r.baseVal.value,
     week: 2 * Math.PI * rings.week.r.baseVal.value,
@@ -27,7 +29,7 @@ const circumferences = {
     year: 2 * Math.PI * rings.year.r.baseVal.value
 };
 
-// --- FUNCIONES DE DIBUJO (sin cambios) ---
+// --- FUNCIONES DE DIBUJO ---
 function createDividers(segments, outerRadius, innerRadius) {
     const angleStep = 360 / segments;
     for (let i = 0; i < segments; i++) {
@@ -45,19 +47,19 @@ function polarToCartesian(cx, cy, r, angle) {
     return { x: cx + (r * Math.cos(rad)), y: cy + (r * Math.sin(rad)) };
 }
 
-// --- LÓGICA DE ANIMACIÓN CORREGIDA ---
+// --- LÓGICA DE ANIMACIÓN ---
 function setProgress(ringKey, percentRemaining) {
     const circumference = circumferences[ringKey];
     const offset = circumference - (percentRemaining / 100 * circumference);
     rings[ringKey].style.strokeDasharray = `${circumference} ${circumference}`;
-    rings[ringKey].style.strokeDashoffset = -offset; // Usar un offset negativo corrige la dirección
+    rings[ringKey].style.strokeDashoffset = -offset;
 }
 
-// --- LÓGICA PRINCIPAL (Actualizada) ---
+// --- LÓGICA PRINCIPAL ---
 function updateClocks() {
     const now = new Date();
 
-    // 1. ANILLO DIARIO (07:00 a 23:00 - 16 horas activas)
+    // 1. ANILLO DIARIO
     const blocks = [{ name: 'ichi', start: 7 }, { name: 'ni', start: 11 }, { name: 'san', start: 15 }, { name: 'shi', start: 19 }, { name: 'go', start: 23 }];
     const currentHour = now.getHours();
     let currentBlock = blocks.find((b, i) => {
@@ -66,6 +68,9 @@ function updateClocks() {
         return currentHour >= b.start && currentHour < next.start;
     }) || { name: 'go' };
     
+    // Lógica para mostrar/ocultar la barra 'Go'
+    goBar.style.display = (currentBlock.name === 'go') ? 'block' : 'none';
+
     const dayStart = new Date(now).setHours(7, 0, 0, 0);
     const dayEnd = new Date(now).setHours(23, 0, 0, 0);
     let dayPercentPassed = (now < dayStart || now >= dayEnd) ? 100 : ((now - dayStart) / (dayEnd - dayStart)) * 100;
@@ -89,10 +94,13 @@ function updateClocks() {
     // 3. ANILLO MENSUAL
     const dayOfMonth = now.getDate();
     const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+    const weekOfMonth = Math.ceil(dayOfMonth / 7);
+    const totalWeeksInMonth = Math.ceil(daysInMonth / 7);
     const monthPercentPassed = ((dayOfMonth - 1) / daysInMonth) * 100;
     const monthPercentRemaining = 100 - monthPercentPassed;
     labels.monthValue.innerText = (monthPercentRemaining / 100).toFixed(2);
-    labels.monthFraction.innerText = `${dayOfMonth}/${daysInMonth}`;
+    labels.monthFraction.innerText = `${dayOfMonth}/${daysInMonth} días`; // Unidad añadida
+    labels.monthWeekFraction.innerText = `${weekOfMonth}/${totalWeeksInMonth} semanas`; // Nueva fracción
     setProgress('month', monthPercentRemaining);
     
     // 4. ANILLO ANUAL
@@ -109,12 +117,12 @@ function updateClocks() {
     setProgress('year', yearPercentRemaining);
 }
 
-// --- INICIALIZACIÓN (sin cambios) ---
+// --- INICIALIZACIÓN ---
 function initialize() {
-    createDividers(12, 100, 80);
-    createDividers(4, 85, 65);
-    createDividers(7, 70, 50);
-    createDividers(4, 57.5, 32.5);
+    // Se eliminaron las líneas perpendiculares que cruzaban todo
+    createDividers(12, 100, 80);  // Divisores solo para el anillo del Año
+    createDividers(7, 70, 50);   // Divisores solo para el anillo de la Semana
+    createDividers(4, 57.5, 32.5); // Divisores solo para el anillo del Día
 
     setInterval(updateClocks, 1000);
     updateClocks();
