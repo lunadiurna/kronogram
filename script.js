@@ -1,27 +1,29 @@
 // =================================================================================
-// 1. CONFIGURACIÓN Y ELEMENTOS DEL DOM (sin cambios)
+// 1. CONFIGURACIÓN Y ELEMENTOS DEL DOM
 // =================================================================================
 const segmentContainers = { day: document.getElementById('day-segments'), week: document.getElementById('week-segments'), month: document.getElementById('month-segments'), year: document.getElementById('year-segments') };
 const labels = { dayBlockName: document.getElementById('day-block-name'), dayValue: document.getElementById('day-value'), dayFraction: document.getElementById('day-fraction'), weekValue: document.getElementById('week-value'), weekFraction: document.getElementById('week-fraction'), monthValue: document.getElementById('month-value'), monthFraction: document.getElementById('month-fraction'), monthWeekFraction: document.getElementById('month-week-fraction'), yearValue: document.getElementById('year-value'), yearFraction: document.getElementById('year-fraction'), yearDaysFraction: document.getElementById('year-days-fraction') };
-const goBar = document.getElementById('go-bar'); // Eliminado en la versión final de "bloques"
-// ¡Atención! El script que te dí antes tenía un error al seguir referenciando goBar, lo elimino ahora.
+
+// Elementos para el display central
+const centerDisplay = {
+    container: document.getElementById('center-display'),
+    countdown: document.getElementById('digital-countdown'),
+    blockName: document.getElementById('center-block-name')
+};
+const ALL_COLOR_CLASSES = ['text-color-1', 'text-color-2', 'text-color-3', 'text-color-4', 'text-color-go'];
 
 // =================================================================================
-// 2. FUNCIONES DE DIBUJO (sin cambios)
+// 2. FUNCIONES DE DIBUJO
 // =================================================================================
-function createRingSegments(config) { /* ...código sin cambios... */ }
-function describeArc(x, y, radius, startAngle, endAngle) { /* ...código sin cambios... */ }
-
 function createRingSegments(config) {
     const { container, segmentCount, radius, strokeWidth, cssClass, totalAngle = 360, startAngle = 0, gapDegrees = 1 } = config;
-    container.innerHTML = ''; 
+    container.innerHTML = '';
     const anglePerSegment = (totalAngle - (segmentCount * gapDegrees)) / segmentCount;
     for (let i = 0; i < segmentCount; i++) {
         const segmentStartAngle = startAngle + (i * (anglePerSegment + gapDegrees));
         const segmentEndAngle = segmentStartAngle + anglePerSegment;
         const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
         path.setAttribute("d", describeArc(100, 100, radius, segmentStartAngle, segmentEndAngle));
-        // Si se pasa un array de clases, se usa una lógica distinta
         const finalCssClass = Array.isArray(cssClass) ? cssClass[i] : cssClass;
         path.setAttribute("class", `segment ${finalCssClass} segment-future`);
         path.style.strokeWidth = strokeWidth;
@@ -32,11 +34,8 @@ function describeArc(x, y, radius, startAngle, endAngle) { const polarToCartesia
 
 
 // =================================================================================
-// 3. LÓGICA DE ACTUALIZACIÓN (sin cambios)
+// 3. LÓGICA DE ACTUALIZACIÓN
 // =================================================================================
-function updateSegmentStates(container, activeIndex) { /* ...código sin cambios... */ }
-function updateClocks() { /* ...código sin cambios... */ }
-
 function updateSegmentStates(container, activeIndex) {
     const segments = container.children;
     for (let i = 0; i < segments.length; i++) {
@@ -50,11 +49,39 @@ function updateSegmentStates(container, activeIndex) {
         }
     }
 }
+
 function updateClocks() {
     const now = new Date();
-    const blocks = [{ name: 'ichi', start: 7 }, { name: 'ni', start: 11 }, { name: 'san', start: 15 }, { name: 'shi', start: 19 }, { name: 'go', start: 23 }];
+
+    // LÓGICA DEL ANILLO DIARIO Y COUNTDOWN
+    const blocks = [
+        { name: 'ichi', start: 7,  end: 11, colorClass: 'text-color-1' },
+        { name: 'ni',   start: 11, end: 15, colorClass: 'text-color-2' },
+        { name: 'san',  start: 15, end: 19, colorClass: 'text-color-3' },
+        { name: 'shi',  start: 19, end: 23, colorClass: 'text-color-4' },
+        { name: 'go',   start: 23, end: 7,  colorClass: 'text-color-go' }
+    ];
     const currentHour = now.getHours();
-    let currentBlock = blocks.find((b, i) => { const next = blocks[i+1] || blocks[0]; if (b.name === 'go') return currentHour >= b.start || currentHour < next.start; return currentHour >= b.start && currentHour < next.start; }) || { name: 'go' };
+    let currentBlock = blocks.find(b => {
+        if (b.start < b.end) return currentHour >= b.start && currentHour < b.end;
+        return currentHour >= b.start || currentHour < b.end;
+    });
+
+    let targetTime = new Date();
+    targetTime.setHours(currentBlock.end, 0, 0, 0);
+    if (currentBlock.end < currentBlock.start && now.getHours() >= currentBlock.start) {
+        targetTime.setDate(targetTime.getDate() + 1);
+    }
+    const msRemaining = targetTime - now;
+    const totalSecondsRemaining = Math.floor(msRemaining / 1000);
+    const hoursRemainingCountdown = Math.floor(totalSecondsRemaining / 3600);
+    const minutesRemainingCountdown = Math.floor((totalSecondsRemaining % 3600) / 60);
+
+    centerDisplay.countdown.innerText = `${String(hoursRemainingCountdown).padStart(2, '0')}:${String(minutesRemainingCountdown).padStart(2, '0')}`;
+    centerDisplay.blockName.innerText = currentBlock.name;
+    centerDisplay.container.classList.remove(...ALL_COLOR_CLASSES);
+    centerDisplay.container.classList.add(currentBlock.colorClass);
+
     const dayStart = new Date(now).setHours(7, 0, 0, 0);
     const goSegment = document.getElementById('go-segment');
     const daySegmentsContainer = document.getElementById('day-segments-container');
@@ -67,19 +94,22 @@ function updateClocks() {
         const activeDayIndex = Math.floor(minutesPassedSinceStart / 10);
         updateSegmentStates(daySegmentsContainer, activeDayIndex);
     }
+
     const dayEnd = new Date(now).setHours(23, 0, 0, 0);
     let dayPercentPassed = (now < dayStart || now >= dayEnd) ? 100 : ((now - dayStart) / (dayEnd - dayStart)) * 100;
     const dayPercentRemaining = 100 - dayPercentPassed;
-    const hoursRemaining = (dayPercentRemaining > 0) ? Math.ceil((23 - (now.getHours() + now.getMinutes()/60))) : 0;
+    const hoursRemainingFraction = (dayPercentRemaining > 0) ? Math.ceil((23 - (now.getHours() + now.getMinutes()/60))) : 0;
     labels.dayBlockName.innerText = currentBlock.name;
     labels.dayValue.innerText = (dayPercentRemaining / 100).toFixed(2);
-    labels.dayFraction.innerText = `${hoursRemaining}/16 hrs`;
+    labels.dayFraction.innerText = `${hoursRemainingFraction}/16 hrs`;
+
     const activeWeekIndex = (now.getDay() === 0) ? 6 : now.getDay() - 1;
     updateSegmentStates(segmentContainers.week, activeWeekIndex);
     const daysRemainingInWeek = 7 - activeWeekIndex;
     const weekPercentRemaining = 100 - ((activeWeekIndex / 7) * 100);
     labels.weekValue.innerText = (weekPercentRemaining / 100).toFixed(2);
     labels.weekFraction.innerText = `${daysRemainingInWeek}/7 días`;
+
     const dayOfMonth = now.getDate();
     const activeMonthIndex = Math.ceil(dayOfMonth / 7) - 1;
     updateSegmentStates(segmentContainers.month, activeMonthIndex);
@@ -89,6 +119,7 @@ function updateClocks() {
     labels.monthValue.innerText = (monthPercentRemaining / 100).toFixed(2);
     labels.monthFraction.innerText = `${dayOfMonth}/${daysInMonth} días`;
     labels.monthWeekFraction.innerText = `${activeMonthIndex + 1}/${totalWeeksInMonth} semanas`;
+
     const activeYearIndex = now.getMonth();
     updateSegmentStates(segmentContainers.year, activeYearIndex);
     const dayOfYear = Math.floor((now - new Date(now.getFullYear(), 0, 1)) / 86400000) + 1;
@@ -101,18 +132,15 @@ function updateClocks() {
 }
 
 // =================================================================================
-// 4. INICIALIZACIÓN (MODIFICADA)
+// 4. INICIALIZACIÓN
 // =================================================================================
-
 function initialize() {
     console.log("Inicializando Reloj Segmentado con colores variantes...");
 
-    // --- DIBUJAR LOS ANILLOS SIMPLES ---
     createRingSegments({ container: segmentContainers.year, segmentCount: 12, radius: 90, strokeWidth: 3, cssClass: 'year-segment', gapDegrees: 3 });
     createRingSegments({ container: segmentContainers.month, segmentCount: 5, radius: 86, strokeWidth: 3, cssClass: 'month-segment', gapDegrees: 3 });
     createRingSegments({ container: segmentContainers.week, segmentCount: 7, radius: 82, strokeWidth: 3, cssClass: 'week-segment', gapDegrees: 3 });
-    
-    // --- CAMBIO PRINCIPAL: DIBUJAR EL ANILLO DIARIO CON LÓGICA DE COLOR ---
+
     segmentContainers.day.innerHTML = '';
     const goPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
     goPath.setAttribute("id", "go-segment");
@@ -125,8 +153,6 @@ function initialize() {
     daySegmentsContainer.setAttribute("id", "day-segments-container");
     segmentContainers.day.appendChild(daySegmentsContainer);
 
-    // Reemplazamos la llamada a 'createRingSegments' por un bucle manual
-    // para asignar las clases de color.
     const dayConfig = {
         container: daySegmentsContainer,
         segmentCount: 96,
@@ -136,25 +162,24 @@ function initialize() {
         startAngle: 3,
         gapDegrees: 0.7
     };
-    
+
     const anglePerSegment = (dayConfig.totalAngle - (dayConfig.segmentCount * dayConfig.gapDegrees)) / dayConfig.segmentCount;
 
     for (let i = 0; i < dayConfig.segmentCount; i++) {
-        // Asignamos una clase de color según el bloque de 24 segmentos
         let colorClass = '';
-        if (i < 24) { // Bloque Ichi (primeras 4 horas)
+        if (i < 24) {
             colorClass = 'day-segment-1';
-        } else if (i < 48) { // Bloque Ni (siguientes 4 horas)
+        } else if (i < 48) {
             colorClass = 'day-segment-2';
-        } else if (i < 72) { // Bloque San (siguientes 4 horas)
+        } else if (i < 72) {
             colorClass = 'day-segment-3';
-        } else { // Bloque Shi (últimas 4 horas)
+        } else {
             colorClass = 'day-segment-4';
         }
 
         const segmentStartAngle = dayConfig.startAngle + (i * (anglePerSegment + dayConfig.gapDegrees));
         const segmentEndAngle = segmentStartAngle + anglePerSegment;
-        
+
         const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
         path.setAttribute("d", describeArc(100, 100, dayConfig.radius, segmentStartAngle, segmentEndAngle));
         path.setAttribute("class", `segment ${colorClass} segment-future`);
@@ -162,10 +187,8 @@ function initialize() {
         dayConfig.container.appendChild(path);
     }
 
-    // --- INICIAR EL CICLO DE ACTUALIZACIÓN ---
     setInterval(updateClocks, 1000);
     updateClocks();
 }
 
-// Iniciar todo el proceso.
 initialize();
