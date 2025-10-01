@@ -118,6 +118,7 @@ body {
     height: 100%;
     font-weight: bold;
     transition: color 0.5s ease;
+    transform: rotate(90deg);
 }
 
 #digital-countdown {
