@@ -5,9 +5,11 @@ const segmentContainers = { day: document.getElementById('day-segments'), week: 
 const labels = { dayBlockName: document.getElementById('day-block-name'), dayValue: document.getElementById('day-value'), dayFraction: document.getElementById('day-fraction'), weekValue: document.getElementById('week-value'), weekFraction: document.getElementById('week-fraction'), monthValue: document.getElementById('month-value'), monthFraction: document.getElementById('month-fraction'), monthWeekFraction: document.getElementById('month-week-fraction'), yearValue: document.getElementById('year-value'), yearFraction: document.getElementById('year-fraction'), yearDaysFraction: document.getElementById('year-days-fraction') };
 
 const centerText = {
+    group: document.getElementById('center-text-group'),
     countdown: document.getElementById('digital-countdown-svg'),
     blockName: document.getElementById('center-block-name-svg')
 };
+const ALL_COLOR_CLASSES = ['text-color-1', 'text-color-2', 'text-color-3', 'text-color-4', 'text-color-go'];
 
 // =================================================================================
 // 2. FUNCIONES DE DIBUJO
@@ -51,11 +53,11 @@ function updateClocks() {
     const now = new Date();
 
     const blocks = [
-        { name: 'ichi', start: 7,  end: 11, colorVar: '--day-color-1' },
-        { name: 'ni',   start: 11, end: 15, colorVar: '--day-color-2' },
-        { name: 'san',  start: 15, end: 19, colorVar: '--day-color-3' },
-        { name: 'shi',  start: 19, end: 23, colorVar: '--day-color-4' },
-        { name: 'go',   start: 23, end: 7,  colorVar: '--go-color' }
+        { name: 'ichi', start: 7,  end: 11, colorClass: 'text-color-1' },
+        { name: 'ni',   start: 11, end: 15, colorClass: 'text-color-2' },
+        { name: 'san',  start: 15, end: 19, colorClass: 'text-color-3' },
+        { name: 'shi',  start: 19, end: 23, colorClass: 'text-color-4' },
+        { name: 'go',   start: 23, end: 7,  colorClass: 'text-color-go' }
     ];
     const currentHour = now.getHours();
     let currentBlock = blocks.find(b => {
@@ -75,9 +77,8 @@ function updateClocks() {
 
     centerText.countdown.textContent = `${String(hoursRemainingCountdown).padStart(2, '0')}:${String(minutesRemainingCountdown).padStart(2, '0')}`;
     centerText.blockName.textContent = currentBlock.name;
-    const currentColor = getComputedStyle(document.documentElement).getPropertyValue(currentBlock.colorVar);
-    centerText.countdown.style.fill = currentColor;
-    centerText.blockName.style.fill = currentColor;
+    centerText.group.classList.remove(...ALL_COLOR_CLASSES);
+    centerText.group.classList.add(currentBlock.colorClass);
 
     const dayStart = new Date(now).setHours(7, 0, 0, 0);
     const goSegment = document.getElementById('go-segment');
@@ -129,7 +130,7 @@ function updateClocks() {
 }
 
 // =================================================================================
-// 4. INICIALIZACIÓN
+// 4. INICIALIZACIÓN (CON TU CONFIGURACIÓN PERSONALIZADA)
 // =================================================================================
 function initialize() {
     console.log("Inicializando Reloj Segmentado con colores variantes...");
@@ -188,4 +189,5 @@ function initialize() {
     updateClocks();
 }
 
+// Iniciar todo el proceso.
 initialize();
