@@ -134,16 +134,16 @@ function updateClocks() {
 function initialize() {
     console.log("Inicializando Reloj Segmentado con colores variantes...");
 
-    createRingSegments({ container: segmentContainers.year, segmentCount: 12, radius: 90, strokeWidth: 18, cssClass: 'year-segment', gapDegrees: 2 });
-    createRingSegments({ container: segmentContainers.month, segmentCount: 5, radius: 70, strokeWidth: 18, cssClass: 'month-segment', gapDegrees: 3 });
-    createRingSegments({ container: segmentContainers.week, segmentCount: 7, radius: 50, strokeWidth: 18, cssClass: 'week-segment', gapDegrees: 3 });
+    createRingSegments({ container: segmentContainers.year, segmentCount: 12, radius: 90, strokeWidth: 3, cssClass: 'year-segment', gapDegrees: 2 });
+    createRingSegments({ container: segmentContainers.month, segmentCount: 5, radius: 86, strokeWidth: 3, cssClass: 'month-segment', gapDegrees: 3 });
+    createRingSegments({ container: segmentContainers.week, segmentCount: 7, radius: 82, strokeWidth: 3, cssClass: 'week-segment', gapDegrees: 3 });
 
     segmentContainers.day.innerHTML = '';
     const goPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
     goPath.setAttribute("id", "go-segment");
     goPath.setAttribute("class", "segment");
-    goPath.setAttribute("d", describeArc(100, 100, 30, -2, 2));
-    goPath.style.strokeWidth = "23px";
+    goPath.setAttribute("d", describeArc(100, 99.6, 62, -2, 2));
+    goPath.style.strokeWidth = "32px";
     segmentContainers.day.appendChild(goPath);
 
     const daySegmentsContainer = document.createElementNS("http://www.w3.org/2000/svg", "g");
@@ -153,8 +153,8 @@ function initialize() {
     const dayConfig = {
         container: daySegmentsContainer,
         segmentCount: 96,
-        radius: 30,
-        strokeWidth: 23,
+        radius: 62,
+        strokeWidth: 32,
         totalAngle: 352,
         startAngle: 4,
         gapDegrees: 0.7
