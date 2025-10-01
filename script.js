@@ -172,9 +172,9 @@ function initialize() {
     console.log("Inicializando Reloj Segmentado...");
 
     // --- DIBUJAR LOS ANILLOS SIMPLES ---
-    createRingSegments({ container: segmentContainers.year, segmentCount: 12, radius: 90, strokeWidth: 8, cssClass: 'year-segment', gapDegrees: 2 });
-    createRingSegments({ container: segmentContainers.month, segmentCount: 5, radius: 80, strokeWidth: 8, cssClass: 'month-segment', gapDegrees: 3 });
-    createRingSegments({ container: segmentContainers.week, segmentCount: 7, radius: 70, strokeWidth: 8, cssClass: 'week-segment', gapDegrees: 3 });
+    createRingSegments({ container: segmentContainers.year, segmentCount: 12, radius: 90, strokeWidth: 5, cssClass: 'year-segment', gapDegrees: 2 });
+    createRingSegments({ container: segmentContainers.month, segmentCount: 5, radius: 80, strokeWidth: 6, cssClass: 'month-segment', gapDegrees: 3 });
+    createRingSegments({ container: segmentContainers.week, segmentCount: 7, radius: 70, strokeWidth: 7, cssClass: 'week-segment', gapDegrees: 3 });
     
     // --- CORRECCIÓN CLAVE: DIBUJAR EL ANILLO DIARIO DE FORMA SEGURA ---
     // Limpiamos el contenedor principal del día.
@@ -184,8 +184,8 @@ function initialize() {
     const goPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
     goPath.setAttribute("id", "go-segment");
     goPath.setAttribute("class", "segment"); // Clase base
-    goPath.setAttribute("d", describeArc(100, 100, 30, -2, 2));
-    goPath.style.strokeWidth = "23px";
+    goPath.setAttribute("d", describeArc(100, 100, 50, -2, 2));
+    goPath.style.strokeWidth = "25px";
     segmentContainers.day.appendChild(goPath);
 
     // 2. Creamos un NUEVO contenedor solo para los 96 segmentos de las horas activas.
