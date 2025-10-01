@@ -134,7 +134,7 @@ function updateClocks() {
 function initialize() {
     console.log("Inicializando Reloj Segmentado con colores variantes...");
 
-    createRingSegments({ container: segmentContainers.year, segmentCount: 12, radius: 90, strokeWidth: 3, cssClass: 'year-segment', gapDegrees: 2 });
+    createRingSegments({ container: segmentContainers.year, segmentCount: 12, radius: 90, strokeWidth: 3, cssClass: 'year-segment', gapDegrees: 3 });
     createRingSegments({ container: segmentContainers.month, segmentCount: 5, radius: 86, strokeWidth: 3, cssClass: 'month-segment', gapDegrees: 3 });
     createRingSegments({ container: segmentContainers.week, segmentCount: 7, radius: 82, strokeWidth: 3, cssClass: 'week-segment', gapDegrees: 3 });
 
@@ -155,8 +155,8 @@ function initialize() {
         segmentCount: 96,
         radius: 62,
         strokeWidth: 32,
-        totalAngle: 352,
-        startAngle: 4,
+        totalAngle: 354,
+        startAngle: 3,
         gapDegrees: 0.7
     };
 
