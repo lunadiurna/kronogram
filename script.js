@@ -117,7 +117,7 @@ function initialize() {
     const goPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
     goPath.setAttribute("id", "go-segment");
     goPath.setAttribute("class", "segment");
-    goPath.setAttribute("d", describeArc(99.5, 100, 62, -2, 2));
+    goPath.setAttribute("d", describeArc(100, 100, 62, -2, 2));
     goPath.style.strokeWidth = "32px";
     segmentContainers.day.appendChild(goPath);
 
