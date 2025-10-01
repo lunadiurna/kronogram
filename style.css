@@ -6,10 +6,10 @@
     --year-color: #40c4ff;
     --go-color: #9370db;
     --segment-consumed-color: #383838;
-    --day-color-1: hsl(6, 100%, 80%);
+    --day-color-1: hsl(6, 100%, 70%);
     --day-color-2: hsl(6, 100%, 75%);
-    --day-color-3: hsl(6, 100%, 70%);
-    --day-color-4: hsl(6, 100%, 65%);
+    --day-color-3: hsl(6, 100%, 80%);
+    --day-color-4: hsl(6, 100%, 85%);
 }
 
 body {
