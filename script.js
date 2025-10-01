@@ -109,16 +109,16 @@ function initialize() {
 
     // --- DIBUJAR LOS ANILLOS SIMPLES ---
     createRingSegments({ container: segmentContainers.year, segmentCount: 12, radius: 90, strokeWidth: 3, cssClass: 'year-segment', gapDegrees: 3 });
-    createRingSegments({ container: segmentContainers.month, segmentCount: 5, radius: 76, strokeWidth: 3, cssClass: 'month-segment', gapDegrees: 3 });
-    createRingSegments({ container: segmentContainers.week, segmentCount: 7, radius: 72, strokeWidth: 3, cssClass: 'week-segment', gapDegrees: 3 });
+    createRingSegments({ container: segmentContainers.month, segmentCount: 5, radius: 86, strokeWidth: 3, cssClass: 'month-segment', gapDegrees: 3 });
+    createRingSegments({ container: segmentContainers.week, segmentCount: 7, radius: 82, strokeWidth: 3, cssClass: 'week-segment', gapDegrees: 3 });
     
     // --- CAMBIO PRINCIPAL: DIBUJAR EL ANILLO DIARIO CON LÓGICA DE COLOR ---
     segmentContainers.day.innerHTML = '';
     const goPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
     goPath.setAttribute("id", "go-segment");
     goPath.setAttribute("class", "segment");
-    goPath.setAttribute("d", describeArc(100, 100, 62, -2, 2));
-    goPath.style.strokeWidth = "23px";
+    goPath.setAttribute("d", describeArc(100, 100, 72, -2, 2));
+    goPath.style.strokeWidth = "32px";
     segmentContainers.day.appendChild(goPath);
 
     const daySegmentsContainer = document.createElementNS("http://www.w3.org/2000/svg", "g");
