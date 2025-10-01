@@ -6,6 +6,7 @@
     --year-color: #40c4ff;
     --go-color: #9370db;
     --segment-consumed-color: #383838;
+    /* --- COLORES ACTUALIZADOS SEGÚN TU CONFIGURACIÓN --- */
     --day-color-1: hsl(6, 100%, 70%);
     --day-color-2: hsl(6, 100%, 75%);
     --day-color-3: hsl(6, 100%, 80%);
@@ -109,12 +110,15 @@ body {
 #month-label-group { border-color: var(--month-color); color: var(--month-color); }
 #year-label-group  { border-color: var(--year-color);  color: var(--year-color); }
 
+#center-text-group {
+    transform-origin: center;
+    transform: rotate(90deg);
+    transition: fill 0.5s ease;
+}
+
 .center-text {
     font-weight: bold;
     text-anchor: middle;
-    transition: fill 0.5s ease;
-    transform-origin: center;
-    transform: rotate(90deg);
 }
 
 #digital-countdown-svg {
@@ -126,6 +130,13 @@ body {
     text-transform: capitalize;
     opacity: 0.9;
 }
+
+/* Clases de color para el texto central */
+.text-color-1 { fill: var(--day-color-1); }
+.text-color-2 { fill: var(--day-color-2); }
+.text-color-3 { fill: var(--day-color-3); }
+.text-color-4 { fill: var(--day-color-4); }
+.text-color-go { fill: var(--go-color); }
 
 @media (min-width: 768px) {
     body {
