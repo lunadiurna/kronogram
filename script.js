@@ -31,7 +31,6 @@ function createRingSegments(config) {
 }
 function describeArc(x, y, radius, startAngle, endAngle) { const polarToCartesian = (centerX, centerY, r, angleInDegrees) => { const rad = (angleInDegrees) * Math.PI / 180.0; return { x: centerX + (r * Math.cos(rad)), y: centerY + (r * Math.sin(rad)) }; }; const start = polarToCartesian(x, y, radius, endAngle); const end = polarToCartesian(x, y, radius, startAngle); const largeArcFlag = endAngle - startAngle <= 180 ? "0" : "1"; return `M ${start.x} ${start.y} A ${radius} ${radius} 0 ${largeArcFlag} 0 ${end.x} ${end.y}`; }
 
-
 // =================================================================================
 // 3. LÓGICA DE ACTUALIZACIÓN
 // =================================================================================
@@ -130,7 +129,7 @@ function updateClocks() {
 }
 
 // =================================================================================
-// 4. INICIALIZACIÓN (CON TU CONFIGURACIÓN PERSONALIZADA)
+// 4. INICIALIZACIÓN
 // =================================================================================
 function initialize() {
     console.log("Inicializando Reloj Segmentado con colores variantes...");
@@ -189,5 +188,4 @@ function initialize() {
     updateClocks();
 }
 
-// Iniciar todo el proceso.
 initialize();
