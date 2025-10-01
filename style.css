@@ -6,10 +6,10 @@
     --year-color: #40c4ff;
     --go-color: #9370db;
     --segment-consumed-color: #383838;
-    --day-color-1: hsl(6, 100%, 70%);
+    --day-color-1: hsl(6, 100%, 80%);
     --day-color-2: hsl(6, 100%, 75%);
-    --day-color-3: hsl(6, 100%, 80%);
-    --day-color-4: hsl(6, 100%, 85%);
+    --day-color-3: hsl(6, 100%, 70%);
+    --day-color-4: hsl(6, 100%, 65%);
 }
 
 body {
@@ -109,36 +109,23 @@ body {
 #month-label-group { border-color: var(--month-color); color: var(--month-color); }
 #year-label-group  { border-color: var(--year-color);  color: var(--year-color); }
 
-/* Estilos para el texto y reloj central */
-#center-display {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
+.center-text {
     font-weight: bold;
-    transition: color 0.5s ease;
+    text-anchor: middle;
+    transition: fill 0.5s ease;
+    transform-origin: center;
     transform: rotate(90deg);
 }
 
-#digital-countdown {
-    font-size: 1.9em; /* Reducido de 2.2em */
-    line-height: 1.1;
+#digital-countdown-svg {
+    font-size: 28px;
 }
 
-#center-block-name {
-    font-size: 1.0em; /* Reducido de 1.2em */
+#center-block-name-svg {
+    font-size: 14px;
     text-transform: capitalize;
     opacity: 0.9;
 }
-
-/* Clases de color que el JS asignará dinámicamente */
-.text-color-1 { color: var(--day-color-1); }
-.text-color-2 { color: var(--day-color-2); }
-.text-color-3 { color: var(--day-color-3); }
-.text-color-4 { color: var(--day-color-4); }
-.text-color-go { color: var(--go-color); }
-
 
 @media (min-width: 768px) {
     body {
