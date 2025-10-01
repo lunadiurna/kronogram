@@ -6,7 +6,6 @@
     --year-color: #40c4ff;
     --go-color: #9370db;
     --segment-consumed-color: #383838;
-    /* --- COLORES ACTUALIZADOS SEGÚN TU CONFIGURACIÓN --- */
     --day-color-1: hsl(6, 100%, 70%);
     --day-color-2: hsl(6, 100%, 75%);
     --day-color-3: hsl(6, 100%, 80%);
@@ -77,34 +76,11 @@ body {
     max-width: 400px;
 }
 
-.label-group {
-    display: flex;
-    flex-direction: column;
-    text-align: left;
-    padding-left: 10px;
-    border-left: 2px solid;
-}
-
-.label-title {
-    font-size: 0.9em;
-    opacity: 0.8;
-    text-transform: capitalize;
-}
-
-.label-value {
-    font-size: 1.5em;
-    font-weight: bold;
-}
-
-.label-fraction {
-    font-size: 0.8em;
-    opacity: 0.7;
-}
-
-#month-week-fraction {
-    margin-top: 4px;
-}
-
+.label-group { display: flex; flex-direction: column; text-align: left; padding-left: 10px; border-left: 2px solid; }
+.label-title { font-size: 0.9em; opacity: 0.8; text-transform: capitalize; }
+.label-value { font-size: 1.5em; font-weight: bold; }
+.label-fraction { font-size: 0.8em; opacity: 0.7; }
+#month-week-fraction { margin-top: 4px; }
 #day-label-group   { border-color: var(--day-color-3); color: var(--day-color-3); }
 #week-label-group  { border-color: var(--week-color);  color: var(--week-color); }
 #month-label-group { border-color: var(--month-color); color: var(--month-color); }
@@ -118,7 +94,8 @@ body {
 
 .center-text {
     font-weight: bold;
-    text-anchor: middle;
+    text-anchor: middle; /* <-- CENTRADO HORIZONTAL */
+    dominant-baseline: middle; /* <-- CENTRADO VERTICAL */
 }
 
 #digital-countdown-svg {
@@ -131,7 +108,6 @@ body {
     opacity: 0.9;
 }
 
-/* Clases de color para el texto central */
 .text-color-1 { fill: var(--day-color-1); }
 .text-color-2 { fill: var(--day-color-2); }
 .text-color-3 { fill: var(--day-color-3); }
