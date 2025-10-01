@@ -1,82 +1,49 @@
 :root {
-    /* Paleta de colores principal (sin cambios) */
+    /* Paleta de colores principal */
     --bg-color: #1a1a1a;
     --text-color: #f0f0f0;
-    --day-color: #ff8a80;
     --week-color: #69f0ae;
     --month-color: #ffd740;
     --year-color: #40c4ff;
     --go-color: #9370db;
-    
-    /* --- CAMBIO 1 --- */
-    /* Se redefine el color gris para que sea únicamente para los segmentos consumidos. */
-    --segment-consumed-color: #383838; /* Gris para segmentos ya consumidos */
+    --segment-consumed-color: #383838;
+
+    /* --- CAMBIO 1: NUEVAS VARIANTES DE COLOR PARA EL DÍA --- */
+    /* Usamos HSL (Tono, Saturación, Luminosidad) para un control preciso. */
+    /* Mantenemos el mismo tono (6) y saturación (100%) y solo cambiamos la luminosidad. */
+    --day-color-1: hsl(6, 100%, 80%); /* Ichi (07:00-11:00) - Más claro */
+    --day-color-2: hsl(6, 100%, 75%); /* Ni   (11:00-15:00) */
+    --day-color-3: hsl(6, 100%, 70%); /* San  (15:00-19:00) */
+    --day-color-4: hsl(6, 100%, 65%); /* Shi  (19:00-23:00) - Más intenso */
 }
 
 /* --- ESTRUCTURA GENERAL (sin cambios) --- */
-body {
-    margin: 0;
-    padding: 20px;
-    box-sizing: border-box;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    gap: 40px;
-}
+body { margin: 0; padding: 20px; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: var(--bg-color); color: var(--text-color); display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; gap: 40px; }
+#clock-container { width: 90vw; max-width: 400px; }
+#clocks-svg { transform: rotate(-90deg); }
 
-#clock-container {
-    width: 90vw;
-    max-width: 400px;
-}
+/* --- ESTILOS DE LOS SEGMENTOS --- */
+.segment { fill: none; stroke-linecap: butt; transition: stroke 0.3s ease, opacity 0.3s ease; }
 
-#clocks-svg {
-    transform: rotate(-90deg);
-}
+/* --- CAMBIO 2: REGLAS DE COLOR ESPECÍFICAS --- */
+/* Eliminamos la regla genérica '.day-segment' y la reemplazamos por estas. */
+.day-segment-1 { stroke: var(--day-color-1); }
+.day-segment-2 { stroke: var(--day-color-2); }
+.day-segment-3 { stroke: var(--day-color-3); }
+.day-segment-4 { stroke: var(--day-color-4); }
 
-/* --- ESTILOS DE LOS SEGMENTOS (Lógica modificada) --- */
-
-/* Estilo base para todos los segmentos */
-.segment {
-    fill: none;
-    stroke-linecap: butt; /* Mantenemos los extremos rectos */
-    transition: stroke 0.3s ease, opacity 0.3s ease;
-}
-
-/* --- CAMBIO 2 --- */
-/* Ahora, por defecto, todos los segmentos de un anillo tienen su color principal. */
-/* Esto hace que los segmentos "futuros" ya tengan el color intenso que querías. */
-.day-segment   { stroke: var(--day-color); }
+/* Los otros anillos no cambian */
 .week-segment  { stroke: var(--week-color); }
 .month-segment { stroke: var(--month-color); }
 .year-segment  { stroke: var(--year-color); }
 #go-segment    { stroke: var(--go-color) !important; }
 
-/* --- CAMBIO 3 --- */
-/* La clase 'segment-passed' ahora ANULA el color base y aplica el gris de consumido. */
-.segment-passed {
-    stroke: var(--segment-consumed-color) !important; /* Usamos !important para asegurar la anulación */
-    opacity: 0.7;
-}
-
-/* El segmento ACTIVO sigue igual: se asegura de tener opacidad completa y aplica la animación. */
-.segment-active {
-    opacity: 1;
-    animation: pulse 1.5s infinite;
-}
-
-/* (La clase .segment-future ya no es necesaria y ha sido eliminada) */
+/* La lógica de los segmentos consumidos y activos no cambia y funcionará correctamente */
+.segment-passed { stroke: var(--segment-consumed-color) !important; opacity: 0.7; }
+.segment-active { opacity: 1; animation: pulse 1.5s infinite; }
 
 /* --- ANIMACIÓN DE PULSO (sin cambios) --- */
-@keyframes pulse {
-    0% { opacity: 1; }
-    50% { opacity: 0.5; }
-    100% { opacity: 1; }
-}
+@keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
 
 /* --- PANEL DE INFORMACIÓN (sin cambios) --- */
 #labels { display: grid; grid-template-columns: 1fr 1fr; gap: 20px 30px; width: 100%; max-width: 400px; }
@@ -85,11 +52,8 @@ body {
 .label-value { font-size: 1.5em; font-weight: bold; }
 .label-fraction { font-size: 0.8em; opacity: 0.7; }
 #month-week-fraction { margin-top: 4px; }
-#day-label-group   { border-color: var(--day-color);   color: var(--day-color); }
+#day-label-group   { border-color: var(--day-color-3); color: var(--day-color-3); } /* Usamos un tono intermedio para el texto */
 #week-label-group  { border-color: var(--week-color);  color: var(--week-color); }
 #month-label-group { border-color: var(--month-color); color: var(--month-color); }
 #year-label-group  { border-color: var(--year-color);  color: var(--year-color); }
-@media (min-width: 768px) {
-    body { flex-direction: row; justify-content: center; align-items: center; }
-    #labels { grid-template-columns: 1fr; max-width: 200px; }
-}
+@media (min-width: 768px) { body { flex-direction: row; } #labels { grid-template-columns: 1fr; max-width: 200px; } }
