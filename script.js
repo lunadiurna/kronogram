@@ -4,13 +4,10 @@
 const segmentContainers = { day: document.getElementById('day-segments'), week: document.getElementById('week-segments'), month: document.getElementById('month-segments'), year: document.getElementById('year-segments') };
 const labels = { dayBlockName: document.getElementById('day-block-name'), dayValue: document.getElementById('day-value'), dayFraction: document.getElementById('day-fraction'), weekValue: document.getElementById('week-value'), weekFraction: document.getElementById('week-fraction'), monthValue: document.getElementById('month-value'), monthFraction: document.getElementById('month-fraction'), monthWeekFraction: document.getElementById('month-week-fraction'), yearValue: document.getElementById('year-value'), yearFraction: document.getElementById('year-fraction'), yearDaysFraction: document.getElementById('year-days-fraction') };
 
-// Elementos para el display central
-const centerDisplay = {
-    container: document.getElementById('center-display'),
-    countdown: document.getElementById('digital-countdown'),
-    blockName: document.getElementById('center-block-name')
+const centerText = {
+    countdown: document.getElementById('digital-countdown-svg'),
+    blockName: document.getElementById('center-block-name-svg')
 };
-const ALL_COLOR_CLASSES = ['text-color-1', 'text-color-2', 'text-color-3', 'text-color-4', 'text-color-go'];
 
 // =================================================================================
 // 2. FUNCIONES DE DIBUJO
@@ -53,13 +50,12 @@ function updateSegmentStates(container, activeIndex) {
 function updateClocks() {
     const now = new Date();
 
-    // LÓGICA DEL ANILLO DIARIO Y COUNTDOWN
     const blocks = [
-        { name: 'ichi', start: 7,  end: 11, colorClass: 'text-color-1' },
-        { name: 'ni',   start: 11, end: 15, colorClass: 'text-color-2' },
-        { name: 'san',  start: 15, end: 19, colorClass: 'text-color-3' },
-        { name: 'shi',  start: 19, end: 23, colorClass: 'text-color-4' },
-        { name: 'go',   start: 23, end: 7,  colorClass: 'text-color-go' }
+        { name: 'ichi', start: 7,  end: 11, colorVar: '--day-color-1' },
+        { name: 'ni',   start: 11, end: 15, colorVar: '--day-color-2' },
+        { name: 'san',  start: 15, end: 19, colorVar: '--day-color-3' },
+        { name: 'shi',  start: 19, end: 23, colorVar: '--day-color-4' },
+        { name: 'go',   start: 23, end: 7,  colorVar: '--go-color' }
     ];
     const currentHour = now.getHours();
     let currentBlock = blocks.find(b => {
@@ -77,10 +73,11 @@ function updateClocks() {
     const hoursRemainingCountdown = Math.floor(totalSecondsRemaining / 3600);
     const minutesRemainingCountdown = Math.floor((totalSecondsRemaining % 3600) / 60);
 
-    centerDisplay.countdown.innerText = `${String(hoursRemainingCountdown).padStart(2, '0')}:${String(minutesRemainingCountdown).padStart(2, '0')}`;
-    centerDisplay.blockName.innerText = currentBlock.name;
-    centerDisplay.container.classList.remove(...ALL_COLOR_CLASSES);
-    centerDisplay.container.classList.add(currentBlock.colorClass);
+    centerText.countdown.textContent = `${String(hoursRemainingCountdown).padStart(2, '0')}:${String(minutesRemainingCountdown).padStart(2, '0')}`;
+    centerText.blockName.textContent = currentBlock.name;
+    const currentColor = getComputedStyle(document.documentElement).getPropertyValue(currentBlock.colorVar);
+    centerText.countdown.style.fill = currentColor;
+    centerText.blockName.style.fill = currentColor;
 
     const dayStart = new Date(now).setHours(7, 0, 0, 0);
     const goSegment = document.getElementById('go-segment');
@@ -98,7 +95,7 @@ function updateClocks() {
     const dayEnd = new Date(now).setHours(23, 0, 0, 0);
     let dayPercentPassed = (now < dayStart || now >= dayEnd) ? 100 : ((now - dayStart) / (dayEnd - dayStart)) * 100;
     const dayPercentRemaining = 100 - dayPercentPassed;
-    const hoursRemainingFraction = (dayPercentRemaining > 0) ? Math.ceil((23 - (now.getHours() + now.getMinutes()/60))) : 0;
+    const hoursRemainingFraction = (dayPercentRemaining > 0) ? Math.ceil((23 - (now.getHours() + now.getMinutes() / 60))) : 0;
     labels.dayBlockName.innerText = currentBlock.name;
     labels.dayValue.innerText = (dayPercentRemaining / 100).toFixed(2);
     labels.dayFraction.innerText = `${hoursRemainingFraction}/16 hrs`;
@@ -137,16 +134,16 @@ function updateClocks() {
 function initialize() {
     console.log("Inicializando Reloj Segmentado con colores variantes...");
 
-    createRingSegments({ container: segmentContainers.year, segmentCount: 12, radius: 90, strokeWidth: 3, cssClass: 'year-segment', gapDegrees: 3 });
-    createRingSegments({ container: segmentContainers.month, segmentCount: 5, radius: 86, strokeWidth: 3, cssClass: 'month-segment', gapDegrees: 3 });
-    createRingSegments({ container: segmentContainers.week, segmentCount: 7, radius: 82, strokeWidth: 3, cssClass: 'week-segment', gapDegrees: 3 });
+    createRingSegments({ container: segmentContainers.year, segmentCount: 12, radius: 90, strokeWidth: 18, cssClass: 'year-segment', gapDegrees: 2 });
+    createRingSegments({ container: segmentContainers.month, segmentCount: 5, radius: 70, strokeWidth: 18, cssClass: 'month-segment', gapDegrees: 3 });
+    createRingSegments({ container: segmentContainers.week, segmentCount: 7, radius: 50, strokeWidth: 18, cssClass: 'week-segment', gapDegrees: 3 });
 
     segmentContainers.day.innerHTML = '';
     const goPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
     goPath.setAttribute("id", "go-segment");
     goPath.setAttribute("class", "segment");
-    goPath.setAttribute("d", describeArc(100, 99.5, 62, -2, 2));
-    goPath.style.strokeWidth = "32px";
+    goPath.setAttribute("d", describeArc(100, 100, 30, -2, 2));
+    goPath.style.strokeWidth = "23px";
     segmentContainers.day.appendChild(goPath);
 
     const daySegmentsContainer = document.createElementNS("http://www.w3.org/2000/svg", "g");
@@ -156,10 +153,10 @@ function initialize() {
     const dayConfig = {
         container: daySegmentsContainer,
         segmentCount: 96,
-        radius: 62,
-        strokeWidth: 32,
-        totalAngle: 354,
-        startAngle: 3,
+        radius: 30,
+        strokeWidth: 23,
+        totalAngle: 352,
+        startAngle: 4,
         gapDegrees: 0.7
     };
 
