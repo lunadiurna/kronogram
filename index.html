@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reloj Segmentado</title>
+    <title>Reloj Segmentado con Countdown</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -13,6 +13,13 @@
             <g id="month-segments"></g>
             <g id="week-segments"></g>
             <g id="day-segments"></g>
+
+            <foreignObject x="25" y="70" width="150" height="60">
+                <div xmlns="http://www.w3.org/1999/xhtml" id="center-display">
+                    <div id="digital-countdown">--:--</div>
+                    <div id="center-block-name">--</div>
+                </div>
+            </foreignObject>
         </svg>
     </div>
 
