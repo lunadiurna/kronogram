@@ -121,12 +121,12 @@ body {
 }
 
 #digital-countdown {
-    font-size: 2.2em;
-    line-height: 1;
+    font-size: 1.9em; /* Reducido de 2.2em */
+    line-height: 1.1;
 }
 
 #center-block-name {
-    font-size: 1.2em;
+    font-size: 1.0em; /* Reducido de 1.2em */
     text-transform: capitalize;
     opacity: 0.9;
 }
